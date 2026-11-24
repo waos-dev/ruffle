@@ -5201,7 +5201,9 @@ dependencies = [
  "ruffle_core",
  "ruffle_render",
  "ruffle_render_wgpu",
+ "ruffle_video",
  "ruffle_video_software",
+ "slotmap",
  "tracing",
  "tracing-subscriber",
  "url",
@@ -6826,7 +6828,7 @@ dependencies = [
 [[package]]
 name = "wasdk"
 version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?rev=1528eb703d3021f7ea447add827f74a8a210e178#1528eb703d3021f7ea447add827f74a8a210e178"
+source = "git+https://github.com/waos-dev/waos?rev=8c7ea13a66504a02f491864ae0c34c13a3901d39#8c7ea13a66504a02f491864ae0c34c13a3901d39"
 dependencies = [
  "inventory",
  "wasdk-macros",
@@ -6836,7 +6838,7 @@ dependencies = [
 [[package]]
 name = "wasdk-macros"
 version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?rev=1528eb703d3021f7ea447add827f74a8a210e178#1528eb703d3021f7ea447add827f74a8a210e178"
+source = "git+https://github.com/waos-dev/waos?rev=8c7ea13a66504a02f491864ae0c34c13a3901d39#8c7ea13a66504a02f491864ae0c34c13a3901d39"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -6846,7 +6848,7 @@ dependencies = [
 [[package]]
 name = "wasdk-wgpu"
 version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?rev=1528eb703d3021f7ea447add827f74a8a210e178#1528eb703d3021f7ea447add827f74a8a210e178"
+source = "git+https://github.com/waos-dev/waos?rev=8c7ea13a66504a02f491864ae0c34c13a3901d39#8c7ea13a66504a02f491864ae0c34c13a3901d39"
 dependencies = [
  "futures",
  "js-sys",

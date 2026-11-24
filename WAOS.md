@@ -16,12 +16,12 @@ Checked in a headless WaOS on a Mac, with movies from Ruffle's own tests:
 
 - A movie is drawn and animates, and its sound is mixed and written to WaOS's output.
 - Keys reach a movie as key events and as typed text, and the pointer as mouse events.
+- H.264 video plays through WaOS's video decoder, which is the system's (VideoToolbox on a Mac): Ruffle's own test movie `visual/video/h264`, whose pictures are stored out of the order they are shown in, shows them in order. H.263, VP6 and Screen Video play through Ruffle's software decoders. On a system where WaOS has no decoder yet, H.264 is not shown and the log says so.
 
 Not yet, each answered as a platform without it and logged where a movie asks:
 
 - Fetching over the network, opening a link, and sockets. A movie reads only files beside it.
 - The clipboard, full screen, a system's fonts (text in a device font is drawn in the font Ruffle carries), file dialogs a movie opens, and an on-screen keyboard.
-- H.264 video: Ruffle decodes it through a system's decoder, and WaOS has no video decoding interface yet. H.263, VP6 and Screen Video play through Ruffle's software decoders.
 
 ## Building
 

@@ -1,8 +1,9 @@
 //! The program: one movie played in one window, from choosing the movie to the window's end.
 //!
 //! Ruffle's player is built on WaOS's own: its wgpu renderer on the window's view (`renderer`),
-//! its mixer played through WaOS's audio graph (`audio`), and the small backends the player asks
-//! its platform for (`navigator`, `storage`, `ui`). `playback` then runs the player from the
+//! its mixer played through WaOS's audio graph (`audio`), its H.264 video decoded by WaOS's
+//! decoders (`video`), and the small backends the player asks its platform for (`navigator`,
+//! `storage`, `ui`). `playback` then runs the player from the
 //! view's events.
 //!
 //! The invariant: everything runs on the program's one thread, as tasks of wasdk's executor, where
@@ -20,6 +21,7 @@ mod pointer;
 mod renderer;
 mod storage;
 mod ui;
+mod video;
 mod window;
 
 use std::path::Path;
@@ -29,7 +31,6 @@ use ruffle_core::tag_utils::SwfMovieData;
 use ruffle_core::{Player, PlayerBuilder};
 use ruffle_render_wgpu::backend::WgpuRenderBackend;
 use ruffle_render_wgpu::target::SwapChainTarget;
-use ruffle_video_software::backend::SoftwareVideoBackend;
 use tracing_subscriber::EnvFilter;
 use wasdk::windows::Size;
 use wasdk_wgpu::SharedView;
@@ -38,6 +39,7 @@ use audio::WaosAudioBackend;
 use navigator::WaosNavigatorBackend;
 use storage::WaosStorageBackend;
 use ui::WaosUiBackend;
+use video::WaosVideoBackend;
 
 /// What the log shows unless `RUST_LOG` says otherwise: warnings, and what movies trace.
 const DEFAULT_LOG_FILTER: &str = "warn,avm_trace=info";
@@ -90,7 +92,7 @@ fn build_player(
         .with_navigator(WaosNavigatorBackend::beside(movie_path))
         .with_storage(Box::new(WaosStorageBackend::new()))
         .with_ui(WaosUiBackend::new(view.clone()))
-        .with_video(SoftwareVideoBackend::new())
+        .with_video(WaosVideoBackend::new())
         .with_autoplay(true);
     with_sound(builder).build()
 }
