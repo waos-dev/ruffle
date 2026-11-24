@@ -1,0 +1,7 @@
+# WaOS port: WaOS's own toolchain, the nightly its SDK is built with, and `wasm32-wasip3`, what a
+# WaOS program is built for. Upstream names no toolchain, so on this branch its crates build
+# with this one too.
+[toolchain]
+channel = "nightly-2026-11-15"
+components = ["rustfmt", "clippy"]
+targets = ["wasm32-wasip3"]
