@@ -12,7 +12,7 @@ workspace = true
 
 # WaOS port: what `waos run` and `waos package` call the program.
 [package.metadata.waos]
-id = "dev.waos.ruffle.desktop"
+id = "dev.waos.ruffle"
 name = "Ruffle"
 
 [dependencies]

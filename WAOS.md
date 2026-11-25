@@ -1,6 +1,6 @@
 # Ruffle for WaOS
 
-The branch `waos` of `github.com/waos-dev/ruffle` is Ruffle as a [WaOS](https://github.com/waos-dev/waos) app: Ruffle's own desktop program (`desktop/`), with its menu bar, its dialogs and its preferences, built for `wasm32-wasip3` and run as `dev.waos.ruffle.desktop`. Its preferences and recent movies are kept in the app's own `/data/ruffle`.
+The branch `waos` of `github.com/waos-dev/ruffle` is Ruffle as a [WaOS](https://github.com/waos-dev/waos) app: Ruffle's own desktop program (`desktop/`), with its menu bar, its dialogs and its preferences, built for `wasm32-wasip3` and run as `dev.waos.ruffle`. Its preferences and recent movies are kept in the app's own `/data/ruffle`.
 
 It runs because the libraries it is written against have WaOS backends, on forks under `github.com/waos-dev`, each on a branch `waos` with a `WAOS.md` of its own: winit, egui, arboard, rfd, webbrowser, dirs, sys-locale, fontdb and reqwest.
 
