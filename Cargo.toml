@@ -233,5 +233,6 @@ webbrowser = { git = "https://github.com/waos-dev/webbrowser-rs", branch = "waos
 dirs = { git = "https://github.com/waos-dev/dirs-rs", branch = "waos" }
 sys-locale = { git = "https://github.com/waos-dev/sys-locale", branch = "waos" }
 fontdb = { git = "https://github.com/waos-dev/fontdb", branch = "waos" }
+reqwest = { git = "https://github.com/waos-dev/reqwest", branch = "waos" }
 wasdk = { git = "https://github.com/waos-dev/waos", branch = "main" }
 wasdk-wgpu = { git = "https://github.com/waos-dev/waos", branch = "main" }

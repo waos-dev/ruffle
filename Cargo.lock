@@ -4657,8 +4657,7 @@ checksum = "19b30a45b0cd0bcca8037f3d0dc3421eaf95327a17cad11964fb8179b4fc4832"
 [[package]]
 name = "reqwest"
 version = "0.13.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "16a1cfa75cc186dd73d5818e510e042e40927bccc9c236b061cea97e1eb08029"
+source = "git+https://github.com/waos-dev/reqwest?branch=waos#1b4fb33bd801a578c22ae14a68c12f67859fdc3e"
 dependencies = [
  "base64 0.23.1",
  "bytes",
@@ -4693,6 +4692,7 @@ dependencies = [
  "tower-http",
  "tower-service",
  "url",
+ "wasdk 0.7.1 (git+https://github.com/waos-dev/waos?branch=main)",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
