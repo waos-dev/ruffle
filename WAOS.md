@@ -14,6 +14,25 @@ What of upstream's is changed, each as a commit of its own that could go to Ruff
 - `frontend-utils/Cargo.toml`: `reqwest` comes with the `navigator` feature, its only user, where it was always built. Without it the crate builds for `wasm32-wasip3`, which has no sockets of its own for `reqwest` and `tokio` to stand on, so the port can use the preferences, bookmarks and bundles Ruffle's UI is built on. The desktop program asks for `navigator` and builds as before.
 - `desktop/src`: the GUI, the player and its backends send the app's events through `RuffleEventSender` (`custom_event.rs`), where each held winit's `EventLoopProxy`. The app makes the sender from winit's proxy once, and nothing behaves differently. It is the first step of making the GUI usable with another event loop, WaOS's.
 
+## The desktop program on WaOS
+
+Ruffle's own desktop program (`desktop/`), with its menu bar, its dialogs and its preferences, also builds for `wasm32-wasip3` and runs as `dev.waos.ruffle.desktop`. It is the way forward for the port: `waos/` puts a player together by hand, and the desktop program is Ruffle's real one.
+
+It runs because the libraries it is written against have WaOS backends, on forks under `github.com/waos-dev`, each on a branch `waos` with a `WAOS.md` of its own: winit, egui, arboard, rfd, webbrowser, dirs and sys-locale. The workspace's `Cargo.toml` takes them through `[patch.crates-io]`, with `wasdk` from WaOS's `main` until its next release.
+
+What the desktop program itself chooses by target, each at one place:
+
+- `desktop/src/task.rs`: starting a task and waiting for one. On WaOS a task runs on winit's event loop (`winit::platform::waos::spawn_local`) and a wait is `wasdk::block_on`. A task is never started with `wasdk::spawn` there: a wait on the app's thread takes such a task up and does not return until it ends.
+- `desktop/src/backends.rs`: the player's sound, and the outputs the preferences list; `desktop/src/backends/waos/` holds WaOS's audio and the movie's files, as `waos/` has them.
+- `desktop/Cargo.toml`: cpal, the log file's library, tokio's runtime, the network libraries and egui-wgpu's own GPU backends are named for a desktop alone.
+- The GPU instance is WaOS's one (`gui/controller.rs`), the log goes to stdout (`main.rs`), a picked file is read in place (`backends/ui.rs`), and no gamepad library starts (`app.rs`).
+
+Built in `desktop/` with `waos run --release --no-default-features --features software_video,lzma`.
+
+Checked in a headless WaOS on a Mac: the window opens with the menu bar and the open dialog, a path typed there starts a movie, and the movie plays with software video.
+
+Not there yet: H.264 through WaOS's decoder, which `waos/` has; fetching over the network; a system's fonts, so the UI's text beyond Latin is missing; gamepads.
+
 ## What works, and what does not yet
 
 Checked in a headless WaOS on a Mac, with movies from Ruffle's own tests:
