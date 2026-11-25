@@ -1,11 +1,11 @@
 mod fetch;
+mod http;
+mod tcp;
 
 use crate::backends::navigator::fetch::{Response, ResponseBody};
 use crate::content::PlayingContent;
 use async_channel::{Receiver, Sender, TryRecvError};
-use async_io::Timer;
-use futures_lite::FutureExt;
-use reqwest::{Proxy, cookie, header};
+use reqwest::{cookie, header};
 use ruffle_core::backend::navigator::{
     ErrorResponse, NavigationMethod, NavigatorBackend, OwnedFuture, Request, SocketMode,
     SuccessResponse, async_return, create_fetch_error, get_encoding,
@@ -22,8 +22,6 @@ use std::path::Path;
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use tokio::net::TcpStream;
 use tracing::warn;
 use url::{ParseError, Url};
 
@@ -103,14 +101,7 @@ impl<F: FutureSpawner<Error>, I: NavigatorInterface> ExternalNavigatorBackend<F,
         }
 
         if let Some(proxy) = proxy {
-            match Proxy::all(proxy.clone()) {
-                Ok(proxy) => {
-                    builder = builder.proxy(proxy);
-                }
-                Err(e) => {
-                    tracing::error!("Couldn't configure proxy {proxy}: {e}")
-                }
-            }
+            builder = http::through_proxy(builder, proxy);
         }
 
         let client = builder.build().ok().map(Rc::new);
@@ -240,7 +231,7 @@ impl<F: FutureSpawner<Error> + 'static, I: NavigatorInterface> NavigatorBackend
 
                 request_builder = request_builder.body(body_data);
 
-                let response = spawn_tokio(request_builder.send()).await.map_err(|e| {
+                let response = http::send(request_builder).await.map_err(|e| {
                     let inner = if e.is_connect() {
                         Error::InvalidDomain(processed_url.to_string())
                     } else {
@@ -354,12 +345,7 @@ impl<F: FutureSpawner<Error> + 'static, I: NavigatorInterface> NavigatorBackend
 
             let host2 = host.clone();
 
-            let timeout = async {
-                Timer::after(timeout).await;
-                Result::<TcpStream, io::Error>::Err(io::Error::new(ErrorKind::TimedOut, ""))
-            };
-
-            let mut stream = match TcpStream::connect((host, port)).or(timeout).await {
+            let mut stream = match tcp::Connection::open(host, port, timeout).await {
                 Err(e) if e.kind() == ErrorKind::TimedOut => {
                     warn!("Connection to {}:{} timed out", host2, port);
                     let action = SocketAction::Connect(handle, ConnectionState::TimedOut);
@@ -457,17 +443,14 @@ impl<F: FutureSpawner<Error> + 'static, I: NavigatorInterface> NavigatorBackend
             };
 
             //NOTE: If one future exits, this will take the other one down too.
-            tokio::select! {
-               _ = read => {},
-               _ = write => {},
-            }
+            tcp::until_either_ends(read, write).await;
 
             if let Err(e) = stream.shutdown().await {
                 tracing::warn!("Failed to shutdown write half of TcpStream: {e}");
             }
         });
 
-        tokio::spawn(future);
+        tcp::start(&self.future_spawner, future);
     }
 }
 
@@ -487,10 +470,13 @@ where
 #[cfg(test)]
 #[expect(clippy::unwrap_used)]
 mod tests {
+    use async_io::Timer;
+    use futures_lite::FutureExt;
     use ruffle_core::socket::SocketAction::{Close, Connect, Data};
     use std::net::SocketAddr;
     use std::str::FromStr;
-    use tokio::net::TcpListener;
+    use tokio::io::{AsyncReadExt, AsyncWriteExt};
+    use tokio::net::{TcpListener, TcpStream};
     use tokio::task;
 
     use crate::content::ContentDescriptor;
