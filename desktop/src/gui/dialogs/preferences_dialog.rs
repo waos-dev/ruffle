@@ -743,6 +743,7 @@ fn device_font_renderer_name(
     }
 }
 
+#[cfg(not(target_os = "wasi"))]
 fn backend_availability(instance: &wgpu::Instance, backend: wgpu::Backends) -> wgpu::Backends {
     if crate::task::block_on(instance.enumerate_adapters(backend)).is_empty() {
         wgpu::Backends::empty()
@@ -751,6 +752,15 @@ fn backend_availability(instance: &wgpu::Instance, backend: wgpu::Backends) -> w
     }
 }
 
+/// WaOS port: none of a desktop's graphics libraries to choose among. An app draws through
+/// WaOS's one backend, and wgpu's own instance, made here to ask each library, takes any wasm32
+/// target for a browser.
+#[cfg(target_os = "wasi")]
+fn find_available_graphics_backends(_window: Option<Arc<winit::window::Window>>) -> wgpu::Backends {
+    wgpu::Backends::empty()
+}
+
+#[cfg(not(target_os = "wasi"))]
 fn find_available_graphics_backends(window: Option<Arc<winit::window::Window>>) -> wgpu::Backends {
     let mut available_backends = wgpu::Backends::empty();
 
