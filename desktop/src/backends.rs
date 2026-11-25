@@ -1,6 +1,5 @@
 mod external_interface;
 mod fscommand;
-#[cfg(not(target_os = "wasi"))]
 mod navigator;
 mod path_allow_list;
 mod ui;
@@ -9,13 +8,12 @@ mod waos;
 
 pub use external_interface::DesktopExternalInterfaceProvider;
 pub use fscommand::DesktopFSCommandProvider;
-#[cfg(not(target_os = "wasi"))]
 pub use navigator::DesktopNavigatorInterface;
 pub use path_allow_list::PathAllowList;
 pub use ui::DesktopUiBackend;
 pub use ui::DeviceFontRenderer;
 #[cfg(target_os = "wasi")]
-pub use waos::{WaosNavigatorBackend, WaosVideoBackend};
+pub use waos::WaosVideoBackend;
 
 use ruffle_core::backend::audio::AudioBackend;
 

@@ -58,8 +58,8 @@ walkdir.workspace = true
 async-task = "4.7.1"
 
 # WaOS port: what a desktop's own system serves and WaOS serves its own way. A WaOS app is a
-# WASI component: it has no system TLS, no sockets of a library's own, no runtime of tokio's to
-# drive, and one GPU backend, WaOS's.
+# WASI component: its TLS is WaOS's, it has no sound library of a system's, no runtime of
+# tokio's to drive, and one GPU backend, WaOS's.
 [target.'cfg(not(target_os = "wasi"))'.dependencies]
 cpal = { workspace = true }
 egui-wgpu = { workspace = true, features = ["winit"] }
@@ -70,7 +70,7 @@ tokio = { workspace = true, features = ["rt-multi-thread", "macros", "fs"] }
 [target.'cfg(target_os = "wasi")'.dependencies]
 # Without its default features, which bring wgpu's own backends.
 egui-wgpu = { workspace = true, default-features = false, features = ["winit"] }
-ruffle_frontend_utils = { path = "../frontend-utils", default-features = false, features = ["fs"] }
+ruffle_frontend_utils = { path = "../frontend-utils", default-features = false, features = ["fs", "navigator"] }
 # Its channels and locks alone: tasks run on WaOS's own executor.
 tokio = { workspace = true, features = ["sync", "macros"] }
 wasdk = "0.7.1"

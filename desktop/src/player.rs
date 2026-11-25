@@ -1,7 +1,6 @@
-#[cfg(not(target_os = "wasi"))]
-use crate::backends::DesktopNavigatorInterface;
 use crate::backends::{
-    DesktopExternalInterfaceProvider, DesktopFSCommandProvider, DesktopUiBackend, PathAllowList,
+    DesktopExternalInterfaceProvider, DesktopFSCommandProvider, DesktopNavigatorInterface,
+    DesktopUiBackend, PathAllowList,
 };
 use crate::cli::FilesystemAccessMode;
 use crate::cli::GameModePreference;
@@ -16,7 +15,6 @@ use ruffle_core::config::Letterbox;
 use ruffle_core::events::{GamepadButton, KeyCode};
 use ruffle_core::font::DefaultFont;
 use ruffle_core::{LoadBehavior, Player, PlayerBuilder, PlayerEvent};
-#[cfg(not(target_os = "wasi"))]
 use ruffle_frontend_utils::backends::navigator::{ExternalNavigatorBackend, FutureSpawner};
 use ruffle_frontend_utils::bundle::source::BundleSourceError;
 use ruffle_frontend_utils::bundle::{Bundle, BundleError};
@@ -215,24 +213,13 @@ impl ActivePlayer {
             }
         };
 
-        let movie_url = content.initial_swf_url().clone();
-        let readable_name = content.name();
-        // WaOS port: the movie's files alone, from where WaOS mounts what its user picked. The
-        // desktop's navigator fetches over the network with libraries WaOS has no backend for
-        // yet.
-        #[cfg(target_os = "wasi")]
-        let navigator = {
-            let movie_path = movie_url.to_local_file_path().unwrap_or_default();
-            crate::backends::WaosNavigatorBackend::beside(&movie_path)
-        };
-        #[cfg(not(target_os = "wasi"))]
         let future_spawner = WinitExecutor {
             event_loop: event_loop.clone(),
             player_id,
         };
-        #[cfg(not(target_os = "wasi"))]
+        let movie_url = content.initial_swf_url().clone();
+        let readable_name = content.name();
         let initial_allow_list = PathAllowList::new(content_descriptor);
-        #[cfg(not(target_os = "wasi"))]
         let navigator = ExternalNavigatorBackend::new(
             opt.player
                 .base
@@ -564,13 +551,11 @@ impl PlayerId {
 pub struct PlayerRunnable(async_task::Runnable<PlayerId>);
 
 /// A bare-bones executor that schedules tasks on the winit event loop.
-#[cfg(not(target_os = "wasi"))]
 struct WinitExecutor {
     event_loop: RuffleEventSender,
     player_id: PlayerId,
 }
 
-#[cfg(not(target_os = "wasi"))]
 impl<E: std::error::Error + 'static> FutureSpawner<E> for WinitExecutor {
     fn spawn(&self, future: OwnedFuture<(), E>) {
         // Discard any errors.
