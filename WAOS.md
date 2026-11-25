@@ -12,6 +12,7 @@ What is on top of upstream Ruffle:
 What of upstream's is changed, each as a commit of its own that could go to Ruffle itself:
 
 - `frontend-utils/Cargo.toml`: `reqwest` comes with the `navigator` feature, its only user, where it was always built. Without it the crate builds for `wasm32-wasip3`, which has no sockets of its own for `reqwest` and `tokio` to stand on, so the port can use the preferences, bookmarks and bundles Ruffle's UI is built on. The desktop program asks for `navigator` and builds as before.
+- `desktop/src`: the GUI, the player and its backends send the app's events through `RuffleEventSender` (`custom_event.rs`), where each held winit's `EventLoopProxy`. The app makes the sender from winit's proxy once, and nothing behaves differently. It is the first step of making the GUI usable with another event loop, WaOS's.
 
 ## What works, and what does not yet
 
