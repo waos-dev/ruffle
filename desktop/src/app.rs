@@ -744,9 +744,12 @@ impl ApplicationHandler<RuffleEvent> for App {
             // only place where we're setting control flow, and events cancel wait.
             // Note: the control flow might be set to `ControlFlow::WaitUntil` with a
             // timestamp in the past! Take that into consideration when changing this code.
-            if let Some(next_frame_time) = main_window.next_frame_time {
-                event_loop.set_control_flow(ControlFlow::WaitUntil(next_frame_time));
-            }
+            // With no movie there is no next frame: left at the last movie's time, long
+            // past, the loop would never wait again.
+            event_loop.set_control_flow(match main_window.next_frame_time {
+                Some(next_frame_time) => ControlFlow::WaitUntil(next_frame_time),
+                None => ControlFlow::Wait,
+            });
         }
     }
 
