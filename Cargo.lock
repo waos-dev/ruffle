@@ -4947,6 +4947,7 @@ dependencies = [
  "tracing",
  "url",
  "urlencoding",
+ "wasdk 0.7.1 (git+https://github.com/waos-dev/waos?branch=main)",
  "zip",
 ]
 

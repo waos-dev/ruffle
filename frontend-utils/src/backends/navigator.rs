@@ -15,6 +15,7 @@ use ruffle_core::loader::Error;
 use ruffle_core::socket::{ConnectionState, SocketAction, SocketHandle};
 use std::collections::HashSet;
 use std::fs::File;
+#[cfg(not(target_os = "wasi"))]
 use std::future::Future;
 use std::io;
 use std::io::ErrorKind;
@@ -455,6 +456,7 @@ impl<F: FutureSpawner<Error> + 'static, I: NavigatorInterface> NavigatorBackend
 }
 
 /// Spawns a new asynchronous task in a tokio runtime, without the current executor needing to belong to tokio
+#[cfg(not(target_os = "wasi"))]
 pub async fn spawn_tokio<F>(future: F) -> F::Output
 where
     F: Future + Send + 'static,
