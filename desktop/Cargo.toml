@@ -15,6 +15,19 @@ workspace = true
 id = "dev.waos.ruffle"
 name = "Ruffle"
 
+# WaOS port: the movies the system offers Ruffle for, the extensions Ruffle's own Windows package
+# declares (`desktop/packages/windows`), each by the MIME type freedesktop.org's shared MIME
+# database gives it.
+[[package.metadata.waos.file_associations]]
+extensions = ["swf"]
+name = "Flash Movie"
+mime_type = "application/x-shockwave-flash"
+
+[[package.metadata.waos.file_associations]]
+extensions = ["spl"]
+name = "FutureSplash Movie"
+mime_type = "application/futuresplash"
+
 [dependencies]
 clap = { workspace = true }
 clap_complete = { workspace = true, optional = true }
