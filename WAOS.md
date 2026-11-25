@@ -18,7 +18,7 @@ What of upstream's is changed, each as a commit of its own that could go to Ruff
 
 Ruffle's own desktop program (`desktop/`), with its menu bar, its dialogs and its preferences, also builds for `wasm32-wasip3` and runs as `dev.waos.ruffle.desktop`. It is the way forward for the port: `waos/` puts a player together by hand, and the desktop program is Ruffle's real one.
 
-It runs because the libraries it is written against have WaOS backends, on forks under `github.com/waos-dev`, each on a branch `waos` with a `WAOS.md` of its own: winit, egui, arboard, rfd, webbrowser, dirs and sys-locale. The workspace's `Cargo.toml` takes them through `[patch.crates-io]`, with `wasdk` from WaOS's `main` until its next release.
+It runs because the libraries it is written against have WaOS backends, on forks under `github.com/waos-dev`, each on a branch `waos` with a `WAOS.md` of its own: winit, egui, arboard, rfd, webbrowser, dirs, sys-locale and fontdb. The workspace's `Cargo.toml` takes them through `[patch.crates-io]`, with `wasdk` from WaOS's `main` until its next release.
 
 What the desktop program itself chooses by target, each at one place:
 
@@ -29,9 +29,9 @@ What the desktop program itself chooses by target, each at one place:
 
 Built in `desktop/` with `waos run --release --no-default-features --features software_video,lzma`.
 
-Checked in a headless WaOS on a Mac: the window opens with the menu bar and the open dialog, a path typed there starts a movie, and the movie plays with software video.
+Checked in a headless WaOS on a Mac: the window opens with the menu bar and the open dialog; a path typed there, or given on the command line, starts a movie; H.264 video plays through WaOS's decoder; the File menu and the preferences open; and the system's fonts are found, each file read when first needed.
 
-Not there yet: H.264 through WaOS's decoder, which `waos/` has; fetching over the network; a system's fonts, so the UI's text beyond Latin is missing; gamepads.
+Not there yet: fetching over the network; gamepads; the clipboard and opening a link, which a headless WaOS has neither of to check with.
 
 ## What works, and what does not yet
 

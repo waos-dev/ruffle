@@ -1856,8 +1856,7 @@ dependencies = [
 [[package]]
 name = "fontdb"
 version = "0.23.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "457e789b3d1202543297a350643cf459f836cade38934e7a4cf6a39e7cde2905"
+source = "git+https://github.com/waos-dev/fontdb?branch=waos#a3a053af987bee20380e1996ac5deab927d7230a"
 dependencies = [
  "fontconfig-parser",
  "log",
@@ -1865,6 +1864,7 @@ dependencies = [
  "slotmap",
  "tinyvec",
  "ttf-parser",
+ "wasdk 0.7.1 (git+https://github.com/waos-dev/waos?branch=main)",
 ]
 
 [[package]]
