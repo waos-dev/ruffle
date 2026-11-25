@@ -31,7 +31,9 @@ Built in `desktop/` with `waos run --release --no-default-features --features so
 
 Checked in a headless WaOS on a Mac: the window opens with the menu bar and the open dialog; a path typed there, or given on the command line, starts a movie; H.264 video plays through WaOS's decoder; the File menu and the preferences open; and the system's fonts are found, each file read when first needed.
 
-Not there yet: fetching over the network; gamepads; the clipboard and opening a link, which a headless WaOS has neither of to check with.
+Checked in the WaOS app on a Mac: "Open File" shows the system's panel on the window, and the file picked there plays; full screen from the View menu and back with Escape; a link from the Help menu opens in the browser; text copied in a field reaches the system's clipboard.
+
+Not there yet: fetching over the network; gamepads; pasting what another app copied, which waits on WaOS (the paste works once WaOS itself has been in front since the copy). Not checked: Export, and the dialogs a movie opens.
 
 ## What works, and what does not yet
 
