@@ -5198,6 +5198,8 @@ name = "ruffle_waos"
 version = "0.8.0"
 dependencies = [
  "async-channel",
+ "egui",
+ "egui-wgpu",
  "ruffle_core",
  "ruffle_render",
  "ruffle_render_wgpu",
@@ -5208,6 +5210,7 @@ dependencies = [
  "tracing-subscriber",
  "url",
  "wasdk",
+ "wasdk-adapter-egui",
  "wasdk-wgpu",
  "wgpu",
 ]
@@ -6828,7 +6831,7 @@ dependencies = [
 [[package]]
 name = "wasdk"
 version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?rev=8c7ea13a66504a02f491864ae0c34c13a3901d39#8c7ea13a66504a02f491864ae0c34c13a3901d39"
+source = "git+https://github.com/waos-dev/waos?rev=cfb64f5ac10584ebcf6b5880c33b6032c61101e5#cfb64f5ac10584ebcf6b5880c33b6032c61101e5"
 dependencies = [
  "inventory",
  "wasdk-macros",
@@ -6836,9 +6839,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "wasdk-adapter-egui"
+version = "0.7.1"
+source = "git+https://github.com/waos-dev/waos?rev=cfb64f5ac10584ebcf6b5880c33b6032c61101e5#cfb64f5ac10584ebcf6b5880c33b6032c61101e5"
+dependencies = [
+ "egui",
+ "tracing",
+ "wasdk",
+ "wasdk-wgpu",
+]
+
+[[package]]
 name = "wasdk-macros"
 version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?rev=8c7ea13a66504a02f491864ae0c34c13a3901d39#8c7ea13a66504a02f491864ae0c34c13a3901d39"
+source = "git+https://github.com/waos-dev/waos?rev=cfb64f5ac10584ebcf6b5880c33b6032c61101e5#cfb64f5ac10584ebcf6b5880c33b6032c61101e5"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -6848,7 +6862,7 @@ dependencies = [
 [[package]]
 name = "wasdk-wgpu"
 version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?rev=8c7ea13a66504a02f491864ae0c34c13a3901d39#8c7ea13a66504a02f491864ae0c34c13a3901d39"
+source = "git+https://github.com/waos-dev/waos?rev=cfb64f5ac10584ebcf6b5880c33b6032c61101e5#cfb64f5ac10584ebcf6b5880c33b6032c61101e5"
 dependencies = [
  "futures",
  "js-sys",

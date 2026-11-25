@@ -17,11 +17,19 @@ use ruffle_core::{FloatDuration, Player, PlayerEvent, ViewportDimensions};
 use wasdk::views::{Metrics, ViewEvent, ViewFocusState};
 use wasdk_wgpu::SharedView;
 
+use super::gui::Gui;
 use super::keyboard::Keyboard;
 use super::pointer::Pointer;
+use super::view_target::DrawnFrame;
 
 /// Plays `player` on `view` until the view is gone, or its user closes a view that has no window.
-pub async fn play(player: &Mutex<Player>, view: &SharedView) -> Result<(), String> {
+pub async fn play(
+    player: &Mutex<Player>,
+    view: &SharedView,
+    mut gui: Gui,
+    drawn: DrawnFrame,
+    queue: &wgpu::Queue,
+) -> Result<(), String> {
     let mut events = view
         .events()
         .ok_or("the window's events were taken already")?;
@@ -30,12 +38,17 @@ pub async fn play(player: &Mutex<Player>, view: &SharedView) -> Result<(), Strin
     let mut keyboard = Keyboard::default();
     view.request_frame();
     while let Some(event) = events.next().await {
+        // The controls come first: a click on them is not a click in the movie.
+        let Some(event) = gui.on_view_event(event) else {
+            continue;
+        };
         let mut player = player
             .lock()
             .map_err(|_| "Ruffle's player stopped in a panic")?;
         match event {
             ViewEvent::Frame(frame) => {
-                advance(&mut player, frame_clock.time_since_last(frame.time));
+                player.tick(frame_clock.time_since_last(frame.time));
+                show(&mut player, &mut gui, &drawn, queue);
                 view.request_frame();
             }
             ViewEvent::Metrics(metrics) => player.set_viewport_dimensions(viewport(&metrics)),
@@ -54,11 +67,17 @@ pub async fn play(player: &Mutex<Player>, view: &SharedView) -> Result<(), Strin
     Ok(())
 }
 
-/// Advances `player` by `elapsed`, and draws it when that changed its picture.
-fn advance(player: &mut Player, elapsed: FloatDuration) {
-    player.tick(elapsed);
-    if player.needs_render() {
-        player.render();
+/// Draws the movie with the controls over it and shows the frame, when either has something new
+/// to show: the movie is drawn again for the controls' sake too, since they are drawn over its
+/// picture.
+fn show(player: &mut Player, gui: &mut Gui, drawn: &DrawnFrame, queue: &wgpu::Queue) {
+    if !player.needs_render() && !gui.wants_repaint() {
+        return;
+    }
+    player.render();
+    if let Some(frame) = drawn.take() {
+        gui.draw_over(player, &frame);
+        queue.present(frame);
     }
 }
 

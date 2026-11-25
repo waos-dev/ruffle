@@ -20,14 +20,18 @@ name = "Ruffle"
 # A WaOS program is a WASI component, so everything it is made of is asked for on WASI alone:
 # on any other target the crate is an empty binary, and the workspace's checks pass over it.
 [target.'cfg(target_os = "wasi")'.dependencies]
-wasdk = { git = "https://github.com/waos-dev/waos", rev = "8c7ea13a66504a02f491864ae0c34c13a3901d39" }
-wasdk-wgpu = { git = "https://github.com/waos-dev/waos", rev = "8c7ea13a66504a02f491864ae0c34c13a3901d39" }
+wasdk = { git = "https://github.com/waos-dev/waos", rev = "cfb64f5ac10584ebcf6b5880c33b6032c61101e5" }
+wasdk-wgpu = { git = "https://github.com/waos-dev/waos", rev = "cfb64f5ac10584ebcf6b5880c33b6032c61101e5" }
+wasdk-adapter-egui = { git = "https://github.com/waos-dev/waos", rev = "cfb64f5ac10584ebcf6b5880c33b6032c61101e5" }
 ruffle_core = { path = "../core", features = ["audio", "mp3", "aac", "nellymoser", "default_font", "default_compatibility_rules", "lzma"] }
 ruffle_render = { path = "../render" }
 ruffle_render_wgpu = { path = "../render/wgpu" }
 ruffle_video = { path = "../video" }
 ruffle_video_software = { path = "../video/software" }
 wgpu = { workspace = true }
+egui = { workspace = true }
+# Without its default features, which bring wgpu's own backends: a WaOS program has WaOS's.
+egui-wgpu = { version = "0.36.1", default-features = false }
 async-channel = { workspace = true }
 slotmap = { workspace = true }
 tracing = { workspace = true }

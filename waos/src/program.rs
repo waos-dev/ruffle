@@ -1,8 +1,9 @@
 //! The program: one movie played in one window, from choosing the movie to the window's end.
 //!
 //! Ruffle's player is built on WaOS's own: its wgpu renderer on the window's view (`renderer`),
-//! its mixer played through WaOS's audio graph (`audio`), its H.264 video decoded by WaOS's
-//! decoders (`video`), and the small backends the player asks its platform for (`navigator`,
+//! (`renderer`, `view_target`), with the program's own controls drawn over the movie in egui
+//! (`gui`), its mixer played through WaOS's audio graph (`audio`), its H.264 video decoded by
+//! WaOS's decoders (`video`), and the small backends the player asks its platform for (`navigator`,
 //! `storage`, `ui`). `playback` then runs the player from the
 //! view's events.
 //!
@@ -12,6 +13,7 @@
 //! that ran meanwhile could never take it.
 
 mod audio;
+mod gui;
 mod keyboard;
 mod keys;
 mod movie;
@@ -22,6 +24,7 @@ mod renderer;
 mod storage;
 mod ui;
 mod video;
+mod view_target;
 mod window;
 
 use std::path::Path;
@@ -30,16 +33,17 @@ use std::sync::{Arc, Mutex};
 use ruffle_core::tag_utils::SwfMovieData;
 use ruffle_core::{Player, PlayerBuilder};
 use ruffle_render_wgpu::backend::WgpuRenderBackend;
-use ruffle_render_wgpu::target::SwapChainTarget;
 use tracing_subscriber::EnvFilter;
 use wasdk::windows::Size;
 use wasdk_wgpu::SharedView;
 
 use audio::WaosAudioBackend;
+use gui::Gui;
 use navigator::WaosNavigatorBackend;
 use storage::WaosStorageBackend;
 use ui::WaosUiBackend;
 use video::WaosVideoBackend;
+use view_target::ViewTarget;
 
 /// What the log shows unless `RUST_LOG` says otherwise: warnings, and what movies trace.
 const DEFAULT_LOG_FILTER: &str = "warn,avm_trace=info";
@@ -54,8 +58,11 @@ pub async fn run() -> Result<(), String> {
     let movie = movie::read(&movie_path)?;
     let view = window::open(&movie::name(&movie_path), stage_size(&movie)).await?;
     let renderer = renderer::on_view(&view).await?;
-    let player = build_player(movie, &movie_path, &view, renderer);
-    playback::play(&player, &view).await
+    let descriptors = Arc::clone(&renderer.descriptors);
+    let gui = Gui::new(&view, Arc::clone(&descriptors), renderer.format);
+    let drawn = renderer.drawn.clone();
+    let player = build_player(movie, &movie_path, &view, renderer.backend);
+    playback::play(&player, &view, gui, drawn, &descriptors.queue).await
 }
 
 /// Sends `tracing`'s events, Ruffle's log, to the program's output, which `waos run` and
@@ -82,7 +89,7 @@ fn build_player(
     movie: SwfMovieData,
     movie_path: &Path,
     view: &SharedView,
-    renderer: WgpuRenderBackend<SwapChainTarget>,
+    renderer: WgpuRenderBackend<ViewTarget>,
 ) -> Arc<Mutex<Player>> {
     let metrics = view.metrics();
     let builder = PlayerBuilder::new()

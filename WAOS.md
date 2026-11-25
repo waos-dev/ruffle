@@ -17,6 +17,7 @@ Checked in a headless WaOS on a Mac, with movies from Ruffle's own tests:
 
 - A movie is drawn and animates, and its sound is mixed and written to WaOS's output.
 - Keys reach a movie as key events and as typed text, and the pointer as mouse events.
+- A bar of controls over the movie, drawn with egui: pause and play, and the volume. A click on the bar is not a click in the movie. It is the first piece of Ruffle's own UI here, through `wasdk-adapter-egui`; the menu bar and the dialogs of Ruffle's desktop program are not here yet.
 - H.264 video plays through WaOS's video decoder, which is the system's (VideoToolbox on a Mac): Ruffle's own test movie `visual/video/h264`, whose pictures are stored out of the order they are shown in, shows them in order. H.263, VP6 and Screen Video play through Ruffle's software decoders. On a system where WaOS has no decoder yet, H.264 is not shown and the log says so.
 
 Not yet, each answered as a platform without it and logged where a movie asks:
@@ -30,7 +31,7 @@ Needed:
 
 - Rust through rustup: `rustup toolchain install` in the checkout installs `rust-toolchain.toml`'s.
 - Java, which Ruffle's build compiles its ActionScript library with. OpenJDK 25 works.
-- `waos`, and a WaOS to run it in, built from the revision of WaOS that `waos/Cargo.toml` names for `wasdk`, or newer: what the port was checked on. No release of WaOS carries that revision yet.
+- `waos`, and a WaOS to run it in, built from the revision of WaOS that `waos/Cargo.toml` names for `wasdk`, or newer: what the port was checked on. No release of WaOS carries that revision yet. Today that revision is on WaOS's branch `ruffle-port-base`, which holds the video decoders and the egui adapter together until both are on its `main`.
 
 Then, in `waos/`:
 
