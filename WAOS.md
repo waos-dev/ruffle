@@ -7,6 +7,7 @@ What is on top of upstream Ruffle:
 - `waos/`: the crate `ruffle_waos`, the player put together from Ruffle's own parts on WaOS's: Ruffle's wgpu renderer on the window's view through `wasdk-wgpu`, Ruffle's mixer played through WaOS's audio graph, the view's pointer and keys as Ruffle's events, and the small backends the player asks its platform for. Each module's docs say what it does and what it does not do yet. On any target but WASI the crate is an empty binary, so the workspace's own checks pass over it.
 - `rust-toolchain.toml`: WaOS's nightly, with `wasm32-wasip3`. Upstream names no toolchain, so on this branch its crates build with this one too.
 - `Cargo.toml`: `waos` among the workspace's members.
+- `.github/workflows/waos.yml`: a check that the port builds, formatted and without warnings, on each push to `waos`. Upstream's workflows run on `master` alone.
 
 Nothing of upstream's is changed.
 

@@ -1,0 +1,38 @@
+# WaOS port: checks that Ruffle still builds as a WaOS program. Upstream's own workflows run on
+# `master` alone, so this is the one that runs on the `waos` branch.
+name: WaOS port
+
+on:
+  push:
+    branches: [waos]
+  pull_request:
+    branches: [waos]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build for wasm32-wasip3
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      # `rust-toolchain.toml` names the toolchain and its target; rustup installs both.
+      - name: Install the Rust toolchain
+        run: rustup show active-toolchain || rustup toolchain install
+
+      - name: Cache Cargo output
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "waos"
+
+      - name: Check formatting
+        run: cargo fmt -p ruffle_waos -- --check
+
+      - name: Check clippy
+        run: cargo clippy -p ruffle_waos --target wasm32-wasip3 -- -D warnings
+
+      - name: Build
+        run: cargo build -p ruffle_waos --target wasm32-wasip3
