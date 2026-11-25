@@ -254,6 +254,13 @@ impl ActivePlayer {
             ),
         );
 
+        // WaOS port: H.264 through WaOS's decoders, which are the system's, and the rest in
+        // software; OpenH264, which a desktop downloads, is not asked for.
+        #[cfg(target_os = "wasi")]
+        {
+            builder = builder.with_video(crate::backends::WaosVideoBackend::new());
+        }
+        #[cfg(not(target_os = "wasi"))]
         if cfg!(feature = "external_video") && preferences.openh264_enabled() {
             #[cfg(feature = "external_video")]
             {

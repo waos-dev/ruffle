@@ -15,7 +15,7 @@ pub use path_allow_list::PathAllowList;
 pub use ui::DesktopUiBackend;
 pub use ui::DeviceFontRenderer;
 #[cfg(target_os = "wasi")]
-pub use waos::WaosNavigatorBackend;
+pub use waos::{WaosNavigatorBackend, WaosVideoBackend};
 
 use ruffle_core::backend::audio::AudioBackend;
 

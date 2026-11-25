@@ -75,6 +75,10 @@ ruffle_frontend_utils = { path = "../frontend-utils", default-features = false, 
 tokio = { workspace = true, features = ["sync", "macros"] }
 wasdk = "0.7.1"
 wasdk-wgpu = "0.7.1"
+# The player's video on WaOS: H.264 through WaOS's decoders, the rest in software.
+ruffle_video = { path = "../video" }
+ruffle_video_software = { path = "../video/software" }
+slotmap = { workspace = true }
 
 [target.'cfg(unix)'.dependencies]
 fontconfig = { version = "0.11.0", optional = true }
