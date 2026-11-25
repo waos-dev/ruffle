@@ -36,3 +36,7 @@ jobs:
 
       - name: Build
         run: cargo build -p ruffle_waos --target wasm32-wasip3
+
+      # What the port takes of Ruffle's own front ends must go on building for WaOS.
+      - name: Check the shared front-end crate for WaOS
+        run: cargo check -p ruffle_frontend_utils --target wasm32-wasip3 --features fs,ui

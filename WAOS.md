@@ -9,7 +9,9 @@ What is on top of upstream Ruffle:
 - `Cargo.toml`: `waos` among the workspace's members.
 - `.github/workflows/waos.yml`: a check that the port builds, formatted and without warnings, on each push to `waos`. Upstream's workflows run on `master` alone.
 
-Nothing of upstream's is changed.
+What of upstream's is changed, each as a commit of its own that could go to Ruffle itself:
+
+- `frontend-utils/Cargo.toml`: `reqwest` comes with the `navigator` feature, its only user, where it was always built. Without it the crate builds for `wasm32-wasip3`, which has no sockets of its own for `reqwest` and `tokio` to stand on, so the port can use the preferences, bookmarks and bundles Ruffle's UI is built on. The desktop program asks for `navigator` and builds as before.
 
 ## What works, and what does not yet
 
