@@ -38,9 +38,6 @@ members = [
     "tools/asc",
     "tools/fuzzer",
     "tools/stub-report",
-
-    # WaOS port: Ruffle as a WaOS program, empty on every target but WASI.
-    "waos",
 ]
 default-members = ["desktop"]
 resolver = "2"

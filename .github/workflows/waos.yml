@@ -28,18 +28,15 @@ jobs:
         with:
           shared-key: "waos"
 
+      # Ruffle's own desktop program, as a WaOS app.
       - name: Check formatting
-        run: cargo fmt -p ruffle_waos -- --check
+        run: cargo fmt -p ruffle_desktop -- --check
 
       - name: Check clippy
-        run: cargo clippy -p ruffle_waos --target wasm32-wasip3 -- -D warnings
+        run: cargo clippy -p ruffle_desktop --target wasm32-wasip3 --no-default-features --features software_video,lzma -- -D warnings
 
       - name: Build
-        run: cargo build -p ruffle_waos --target wasm32-wasip3
-
-      # Ruffle's own desktop program, as a WaOS app.
-      - name: Check the desktop program for WaOS
-        run: cargo check -p ruffle_desktop --target wasm32-wasip3 --no-default-features --features software_video,lzma
+        run: cargo build -p ruffle_desktop --target wasm32-wasip3 --no-default-features --features software_video,lzma
 
       # What the port takes of Ruffle's own front ends must go on building for WaOS.
       - name: Check the shared front-end crate for WaOS

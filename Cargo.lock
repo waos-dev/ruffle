@@ -217,7 +217,7 @@ dependencies = [
  "objc2-foundation 0.3.2",
  "parking_lot",
  "percent-encoding",
- "wasdk 0.7.1 (git+https://github.com/waos-dev/waos?branch=main)",
+ "wasdk",
  "windows-sys 0.61.2",
  "x11rb",
 ]
@@ -1411,7 +1411,7 @@ dependencies = [
  "profiling",
  "raw-window-handle",
  "smithay-clipboard",
- "wasdk 0.7.1 (git+https://github.com/waos-dev/waos?branch=main)",
+ "wasdk",
  "web-time",
  "webbrowser",
  "winit",
@@ -1864,7 +1864,7 @@ dependencies = [
  "slotmap",
  "tinyvec",
  "ttf-parser",
- "wasdk 0.7.1 (git+https://github.com/waos-dev/waos?branch=main)",
+ "wasdk",
 ]
 
 [[package]]
@@ -4692,7 +4692,7 @@ dependencies = [
  "tower-http",
  "tower-service",
  "url",
- "wasdk 0.7.1 (git+https://github.com/waos-dev/waos?branch=main)",
+ "wasdk",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
@@ -4715,7 +4715,7 @@ dependencies = [
  "percent-encoding",
  "pollster",
  "raw-window-handle",
- "wasdk 0.7.1 (git+https://github.com/waos-dev/waos?branch=main)",
+ "wasdk",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "wayland-backend",
@@ -4916,8 +4916,8 @@ dependencies = [
  "vergen",
  "vergen-gitcl",
  "walkdir",
- "wasdk 0.7.1 (git+https://github.com/waos-dev/waos?branch=main)",
- "wasdk-wgpu 0.7.1 (git+https://github.com/waos-dev/waos?branch=main)",
+ "wasdk",
+ "wasdk-wgpu",
  "webbrowser",
  "wgpu",
  "windows-sys 0.61.2",
@@ -4947,7 +4947,7 @@ dependencies = [
  "tracing",
  "url",
  "urlencoding",
- "wasdk 0.7.1 (git+https://github.com/waos-dev/waos?branch=main)",
+ "wasdk",
  "zip",
 ]
 
@@ -5187,28 +5187,6 @@ dependencies = [
  "slotmap",
  "swf 0.4.0",
  "thiserror 2.0.21",
-]
-
-[[package]]
-name = "ruffle_waos"
-version = "0.8.0"
-dependencies = [
- "async-channel",
- "egui",
- "egui-wgpu",
- "ruffle_core",
- "ruffle_render",
- "ruffle_render_wgpu",
- "ruffle_video",
- "ruffle_video_software",
- "slotmap",
- "tracing",
- "tracing-subscriber",
- "url",
- "wasdk 0.7.1 (git+https://github.com/waos-dev/waos?rev=d9983bb10bfcb9a3ebd8006e96deb513cf24933b)",
- "wasdk-adapter-egui",
- "wasdk-wgpu 0.7.1 (git+https://github.com/waos-dev/waos?rev=d9983bb10bfcb9a3ebd8006e96deb513cf24933b)",
- "wgpu",
 ]
 
 [[package]]
@@ -6006,7 +5984,7 @@ version = "0.3.2"
 source = "git+https://github.com/waos-dev/sys-locale?branch=waos#12bcccc374db55c966a99d63f9674d3acfc59414"
 dependencies = [
  "libc",
- "wasdk 0.7.1 (git+https://github.com/waos-dev/waos?branch=main)",
+ "wasdk",
 ]
 
 [[package]]
@@ -6831,29 +6809,8 @@ source = "git+https://github.com/waos-dev/waos?branch=main#8cef8341c7965c5235289
 dependencies = [
  "inventory",
  "raw-window-handle",
- "wasdk-macros 0.7.1 (git+https://github.com/waos-dev/waos?branch=main)",
+ "wasdk-macros",
  "wit-bindgen 0.63.0",
-]
-
-[[package]]
-name = "wasdk"
-version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?rev=d9983bb10bfcb9a3ebd8006e96deb513cf24933b#d9983bb10bfcb9a3ebd8006e96deb513cf24933b"
-dependencies = [
- "inventory",
- "wasdk-macros 0.7.1 (git+https://github.com/waos-dev/waos?rev=d9983bb10bfcb9a3ebd8006e96deb513cf24933b)",
- "wit-bindgen 0.63.0",
-]
-
-[[package]]
-name = "wasdk-adapter-egui"
-version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?rev=d9983bb10bfcb9a3ebd8006e96deb513cf24933b#d9983bb10bfcb9a3ebd8006e96deb513cf24933b"
-dependencies = [
- "egui",
- "tracing",
- "wasdk 0.7.1 (git+https://github.com/waos-dev/waos?rev=d9983bb10bfcb9a3ebd8006e96deb513cf24933b)",
- "wasdk-wgpu 0.7.1 (git+https://github.com/waos-dev/waos?rev=d9983bb10bfcb9a3ebd8006e96deb513cf24933b)",
 ]
 
 [[package]]
@@ -6867,34 +6824,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "wasdk-macros"
-version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?rev=d9983bb10bfcb9a3ebd8006e96deb513cf24933b#d9983bb10bfcb9a3ebd8006e96deb513cf24933b"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.119",
-]
-
-[[package]]
 name = "wasdk-wgpu"
 version = "0.7.1"
 source = "git+https://github.com/waos-dev/waos?branch=main#8cef8341c7965c52352894cd673690de2e9e42ab"
 dependencies = [
  "futures",
  "js-sys",
- "wasdk 0.7.1 (git+https://github.com/waos-dev/waos?branch=main)",
- "wgpu",
-]
-
-[[package]]
-name = "wasdk-wgpu"
-version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?rev=d9983bb10bfcb9a3ebd8006e96deb513cf24933b#d9983bb10bfcb9a3ebd8006e96deb513cf24933b"
-dependencies = [
- "futures",
- "js-sys",
- "wasdk 0.7.1 (git+https://github.com/waos-dev/waos?rev=d9983bb10bfcb9a3ebd8006e96deb513cf24933b)",
+ "wasdk",
  "wgpu",
 ]
 
@@ -7156,7 +7092,7 @@ dependencies = [
  "objc2-app-kit 0.3.2",
  "objc2-foundation 0.3.2",
  "url",
- "wasdk 0.7.1 (git+https://github.com/waos-dev/waos?branch=main)",
+ "wasdk",
  "web-sys",
 ]
 
@@ -7756,7 +7692,7 @@ dependencies = [
  "smol_str",
  "tracing",
  "unicode-segmentation",
- "wasdk 0.7.1 (git+https://github.com/waos-dev/waos?branch=main)",
+ "wasdk",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "wayland-backend",
