@@ -31,7 +31,7 @@ Needed:
 
 - Rust through rustup: `rustup toolchain install` in the checkout installs `rust-toolchain.toml`'s.
 - Java, which Ruffle's build compiles its ActionScript library with. OpenJDK 25 works.
-- `waos`, and a WaOS to run it in, built from the revision of WaOS that `waos/Cargo.toml` names for `wasdk`, or newer: what the port was checked on. No release of WaOS carries that revision yet. Today that revision is on WaOS's branch `ruffle-port-base`, which holds the video decoders and the egui adapter together until both are on its `main`.
+- `waos`, and a WaOS to run it in, built from the revision of WaOS that `waos/Cargo.toml` names for `wasdk`, or newer: what the port was checked on. No release of WaOS carries that revision yet.
 
 Then, in `waos/`:
 
