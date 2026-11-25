@@ -63,7 +63,7 @@ impl GuiController {
         let (instance, backend) =
             select_wgpu_backend(preferences.graphics_backends().into(), &window)?;
         let surface = instance.create_surface(window.clone())?;
-        let (adapter, device, queue) = futures::executor::block_on(request_adapter_and_device(
+        let (adapter, device, queue) = crate::task::block_on(request_adapter_and_device(
             backend,
             &instance,
             Some(&surface),
@@ -116,7 +116,7 @@ impl GuiController {
         // scale factor, so egui's own UI zoom would break the layout.
         egui_ctx.options_mut(|o| o.zoom_with_keyboard = false);
 
-        let theme_controller = futures::executor::block_on(ThemeController::new(
+        let theme_controller = crate::task::block_on(ThemeController::new(
             window.clone(),
             preferences.clone(),
             egui_ctx.clone(),
@@ -569,6 +569,17 @@ impl GuiController {
     }
 }
 
+/// WaOS port: WaOS's one GPU backend, WebGPU as WaOS serves it, whatever the preferences name:
+/// an app has no graphics library of a system's to choose among.
+#[cfg(target_os = "wasi")]
+fn select_wgpu_backend(
+    _preferred_backends: wgpu::Backends,
+    _window: &Arc<Window>,
+) -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
+    Ok((wasdk_wgpu::instance(), wgpu::Backends::BROWSER_WEBGPU))
+}
+
+#[cfg(not(target_os = "wasi"))]
 fn select_wgpu_backend(
     preferred_backends: wgpu::Backends,
     window: &Arc<Window>,
@@ -603,13 +614,14 @@ fn select_wgpu_backend(
     ))
 }
 
+#[cfg(not(target_os = "wasi"))]
 fn try_wgpu_backend(backend: wgpu::Backends, window: Arc<Window>) -> Option<wgpu::Instance> {
     let instance = create_wgpu_instance(
         backend,
         wgpu::BackendOptions::default(),
         Some(Box::new(window)),
     );
-    if futures::executor::block_on(instance.enumerate_adapters(backend)).is_empty() {
+    if crate::task::block_on(instance.enumerate_adapters(backend)).is_empty() {
         None
     } else {
         Some(instance)

@@ -3,7 +3,6 @@ use crate::cli::{GameModePreference, OpenUrlMode};
 use crate::gui::{ThemePreference, available_languages, optional_text, text};
 use crate::log::FilenamePattern;
 use crate::preferences::{GlobalPreferences, storage::StorageBackend};
-use cpal::traits::{DeviceTrait, HostTrait};
 use egui::{Align2, Button, Checkbox, ComboBox, DragValue, Grid, Ui, Widget, Window};
 use ruffle_render_wgpu::backend::create_wgpu_instance;
 use ruffle_render_wgpu::clap::{GraphicsBackend, PowerPreference};
@@ -66,15 +65,7 @@ impl PreferencesDialog {
     pub fn new(preferences: GlobalPreferences, window: Option<Arc<winit::window::Window>>) -> Self {
         let available_backends = find_available_graphics_backends(window);
 
-        let audio_host = cpal::default_host();
-        let mut available_output_devices = Vec::new();
-        if let Ok(devices) = audio_host.output_devices() {
-            for device in devices {
-                if let Ok(name) = device.name() {
-                    available_output_devices.push(name);
-                }
-            }
-        }
+        let available_output_devices = crate::backends::output_device_names();
 
         Self {
             available_backends,
@@ -753,7 +744,7 @@ fn device_font_renderer_name(
 }
 
 fn backend_availability(instance: &wgpu::Instance, backend: wgpu::Backends) -> wgpu::Backends {
-    if futures::executor::block_on(instance.enumerate_adapters(backend)).is_empty() {
+    if crate::task::block_on(instance.enumerate_adapters(backend)).is_empty() {
         wgpu::Backends::empty()
     } else {
         backend

@@ -15,6 +15,7 @@ mod gui;
 mod log;
 mod player;
 mod preferences;
+mod task;
 #[cfg(feature = "tracy")]
 mod tracy;
 mod util;
@@ -162,30 +163,44 @@ fn main() -> Result<(), Error> {
 
     let preferences = GlobalPreferences::load(opt)?;
 
-    let logs_path = &preferences.cli.cache_directory.join("log");
-    let log_path = preferences.log_filename_pattern().create_path(logs_path);
-    if let Some(parent) = log_path.parent() {
-        std::fs::create_dir_all(parent)?;
-    }
-    if let Err(err) = migrate_logs(&preferences, logs_path) {
-        tracing::warn!("Failed to migrate logs: {}", err);
-    }
-
-    // [NA] `_guard` cannot be `_` or it'll immediately drop
-    // https://docs.rs/tracing-appender/latest/tracing_appender/non_blocking/index.html
-    let (non_blocking_file, _file_guard) = tracing_appender::non_blocking(File::create(log_path)?);
-    let (non_blocking_stdout, _stdout_guard) = tracing_appender::non_blocking(std::io::stdout());
-
     let env_filter = tracing_subscriber::EnvFilter::builder().parse_lossy(
         env::var("RUST_LOG")
             .as_deref()
             .unwrap_or("warn,ruffle=info,avm_trace=info"),
     );
 
+    #[cfg(not(target_os = "wasi"))]
+    let logs_path = &preferences.cli.cache_directory.join("log");
+    #[cfg(not(target_os = "wasi"))]
+    let log_path = preferences.log_filename_pattern().create_path(logs_path);
+    #[cfg(not(target_os = "wasi"))]
+    if let Some(parent) = log_path.parent() {
+        std::fs::create_dir_all(parent)?;
+    }
+    #[cfg(not(target_os = "wasi"))]
+    if let Err(err) = migrate_logs(&preferences, logs_path) {
+        tracing::warn!("Failed to migrate logs: {}", err);
+    }
+
+    // [NA] `_guard` cannot be `_` or it'll immediately drop
+    // https://docs.rs/tracing-appender/latest/tracing_appender/non_blocking/index.html
+    #[cfg(not(target_os = "wasi"))]
+    let (non_blocking_file, _file_guard) = tracing_appender::non_blocking(File::create(log_path)?);
+    #[cfg(not(target_os = "wasi"))]
+    let (non_blocking_stdout, _stdout_guard) = tracing_appender::non_blocking(std::io::stdout());
+
+    #[cfg(not(target_os = "wasi"))]
     let subscriber = tracing_subscriber::registry()
         .with(env_filter)
         .with(Layer::new().with_writer(non_blocking_stdout))
         .with(Layer::new().with_writer(non_blocking_file).with_ansi(false));
+
+    // WaOS port: WaOS keeps what an app writes and shows it to whoever attaches, so the log goes
+    // to stdout alone, written in place: there is no log file, and no thread to write one on.
+    #[cfg(target_os = "wasi")]
+    let subscriber = tracing_subscriber::registry()
+        .with(env_filter)
+        .with(Layer::new().with_ansi(false));
 
     #[cfg(feature = "tracy")]
     let subscriber = {

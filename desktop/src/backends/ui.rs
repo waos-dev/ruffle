@@ -21,6 +21,7 @@ use std::path::Path;
 use std::rc::Rc;
 use std::str::FromStr;
 use std::sync::Arc;
+#[cfg(not(target_os = "wasi"))]
 use tokio::io::AsyncReadExt;
 use url::Url;
 use winit::raw_window_handle::HasDisplayHandle;
@@ -53,6 +54,52 @@ impl FromStr for DeviceFontRenderer {
     }
 }
 
+#[cfg(not(target_os = "wasi"))]
+async fn read_file(path: &Path) -> (Option<std::fs::Metadata>, Vec<u8>) {
+    let file = match tokio::fs::File::open(path).await {
+        Ok(file) => file,
+        Err(err) => {
+            let path = path.to_string_lossy();
+            tracing::error!("Error opening file {path}: {err}");
+            return (None, Vec::new());
+        }
+    };
+    let metadata = match file.metadata().await {
+        Ok(metadata) => Some(metadata),
+        Err(err) => {
+            let path = path.to_string_lossy();
+            tracing::error!("Error reading metadata of file {path}: {err}");
+            None
+        }
+    };
+
+    let mut contents = Vec::new();
+    let mut file = file;
+    if let Err(err) = file.read_to_end(&mut contents).await {
+        contents.clear();
+        let path = path.to_string_lossy();
+        tracing::error!("Error reading file {path}: {err}");
+    }
+    (metadata, contents)
+}
+
+/// WaOS port: a picked file is read in place, WaOS having no runtime of tokio's to read it on.
+#[cfg(target_os = "wasi")]
+async fn read_file(path: &Path) -> (Option<std::fs::Metadata>, Vec<u8>) {
+    let metadata = std::fs::metadata(path)
+        .inspect_err(|err| {
+            let path = path.to_string_lossy();
+            tracing::error!("Error reading metadata of file {path}: {err}");
+        })
+        .ok();
+    let contents = std::fs::read(path).unwrap_or_else(|err| {
+        let path = path.to_string_lossy();
+        tracing::error!("Error reading file {path}: {err}");
+        Vec::new()
+    });
+    (metadata, contents)
+}
+
 pub struct DesktopFileSelection {
     handle: FileHandle,
     md: Option<std::fs::Metadata>,
@@ -62,34 +109,6 @@ pub struct DesktopFileSelection {
 impl DesktopFileSelection {
     /// Create a new [`DesktopFileSelection`] from a given file handle.
     pub async fn new(handle: FileHandle) -> Self {
-        async fn read_file(path: &Path) -> (Option<std::fs::Metadata>, Vec<u8>) {
-            let file = match tokio::fs::File::open(path).await {
-                Ok(file) => file,
-                Err(err) => {
-                    let path = path.to_string_lossy();
-                    tracing::error!("Error opening file {path}: {err}");
-                    return (None, Vec::new());
-                }
-            };
-            let metadata = match file.metadata().await {
-                Ok(metadata) => Some(metadata),
-                Err(err) => {
-                    let path = path.to_string_lossy();
-                    tracing::error!("Error reading metadata of file {path}: {err}");
-                    None
-                }
-            };
-
-            let mut contents = Vec::new();
-            let mut file = file;
-            if let Err(err) = file.read_to_end(&mut contents).await {
-                contents.clear();
-                let path = path.to_string_lossy();
-                tracing::error!("Error reading file {path}: {err}");
-            }
-            (metadata, contents)
-        }
-
         let (md, contents) = read_file(handle.path()).await;
 
         Self {

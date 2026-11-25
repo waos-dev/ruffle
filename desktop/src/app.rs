@@ -437,7 +437,7 @@ impl MainWindow {
 
 pub struct App {
     main_window: Option<MainWindow>,
-    runtime: Option<tokio::runtime::Runtime>,
+    runtime: Option<crate::task::Runtime>,
     gilrs: Option<Gilrs>,
     event_loop_proxy: RuffleEventSender,
     preferences: GlobalPreferences,
@@ -459,6 +459,11 @@ impl App {
         let mut font_database = fontdb::Database::default();
         font_database.load_system_fonts();
 
+        // WaOS port: WaOS has no gamepads yet, and gilrs takes every wasm32 target for a browser,
+        // whose window it asks for at once.
+        #[cfg(target_os = "wasi")]
+        let gilrs: Option<Gilrs> = None;
+        #[cfg(not(target_os = "wasi"))]
         let gilrs = Gilrs::new()
             .inspect_err(|err| {
                 tracing::warn!("Gamepad support could not be initialized: {err}");
@@ -475,7 +480,7 @@ impl App {
                 proxy.send_event(event).map_err(|_| EventLoopClosed)
             })
         };
-        let runtime = tokio::runtime::Runtime::new()?;
+        let runtime = crate::task::Runtime::new()?;
 
         Ok((
             Self {
@@ -626,7 +631,7 @@ impl ApplicationHandler<RuffleEvent> for App {
             (Some(main_window), RuffleEvent::BrowseAndOpen(options, open_type)) => {
                 let event_loop = main_window.event_loop_proxy.clone();
                 let picker = main_window.gui.file_picker();
-                tokio::spawn(async move {
+                crate::task::spawn(async move {
                     let picked = match open_type {
                         OpenType::File => {
                             picker.pick_ruffle_file(None).await.map(|file| (file, None))

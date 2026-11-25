@@ -300,7 +300,7 @@ impl ExportBundleDialog {
             .collect();
 
         let export_status = self.export_status.clone();
-        tokio::spawn(async move {
+        crate::task::spawn(async move {
             let status = Self::perform_export(
                 selected_file.await,
                 bundle_name,

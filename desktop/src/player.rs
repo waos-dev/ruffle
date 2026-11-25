@@ -1,6 +1,7 @@
+#[cfg(not(target_os = "wasi"))]
+use crate::backends::DesktopNavigatorInterface;
 use crate::backends::{
-    DesktopExternalInterfaceProvider, DesktopFSCommandProvider, DesktopNavigatorInterface,
-    DesktopUiBackend, PathAllowList,
+    DesktopExternalInterfaceProvider, DesktopFSCommandProvider, DesktopUiBackend, PathAllowList,
 };
 use crate::cli::FilesystemAccessMode;
 use crate::cli::GameModePreference;
@@ -15,7 +16,7 @@ use ruffle_core::config::Letterbox;
 use ruffle_core::events::{GamepadButton, KeyCode};
 use ruffle_core::font::DefaultFont;
 use ruffle_core::{LoadBehavior, Player, PlayerBuilder, PlayerEvent};
-use ruffle_frontend_utils::backends::audio::CpalAudioBackend;
+#[cfg(not(target_os = "wasi"))]
 use ruffle_frontend_utils::backends::navigator::{ExternalNavigatorBackend, FutureSpawner};
 use ruffle_frontend_utils::bundle::source::BundleSourceError;
 use ruffle_frontend_utils::bundle::{Bundle, BundleError};
@@ -142,7 +143,7 @@ impl ActivePlayer {
         let player_id = PlayerId::new();
         let mut builder = PlayerBuilder::new();
 
-        match CpalAudioBackend::new(preferences.output_device_name().as_deref()) {
+        match crate::backends::audio(preferences.output_device_name().as_deref()) {
             Ok(audio) => {
                 builder = builder.with_audio(audio);
             }
@@ -214,13 +215,24 @@ impl ActivePlayer {
             }
         };
 
+        let movie_url = content.initial_swf_url().clone();
+        let readable_name = content.name();
+        // WaOS port: the movie's files alone, from where WaOS mounts what its user picked. The
+        // desktop's navigator fetches over the network with libraries WaOS has no backend for
+        // yet.
+        #[cfg(target_os = "wasi")]
+        let navigator = {
+            let movie_path = movie_url.to_local_file_path().unwrap_or_default();
+            crate::backends::WaosNavigatorBackend::beside(&movie_path)
+        };
+        #[cfg(not(target_os = "wasi"))]
         let future_spawner = WinitExecutor {
             event_loop: event_loop.clone(),
             player_id,
         };
-        let movie_url = content.initial_swf_url().clone();
-        let readable_name = content.name();
+        #[cfg(not(target_os = "wasi"))]
         let initial_allow_list = PathAllowList::new(content_descriptor);
+        #[cfg(not(target_os = "wasi"))]
         let navigator = ExternalNavigatorBackend::new(
             opt.player
                 .base
@@ -300,7 +312,7 @@ impl ActivePlayer {
         let (notification_sender, notification_recv) = async_channel::unbounded();
 
         let event_loop2 = event_loop.clone();
-        tokio::spawn(async move {
+        crate::task::spawn(async move {
             while let Ok(notification) = notification_recv.recv().await {
                 let event = RuffleEvent::PlayerNotification(notification);
                 match event_loop2.send_event(event) {
@@ -545,11 +557,13 @@ impl PlayerId {
 pub struct PlayerRunnable(async_task::Runnable<PlayerId>);
 
 /// A bare-bones executor that schedules tasks on the winit event loop.
+#[cfg(not(target_os = "wasi"))]
 struct WinitExecutor {
     event_loop: RuffleEventSender,
     player_id: PlayerId,
 }
 
+#[cfg(not(target_os = "wasi"))]
 impl<E: std::error::Error + 'static> FutureSpawner<E> for WinitExecutor {
     fn spawn(&self, future: OwnedFuture<(), E>) {
         // Discard any errors.

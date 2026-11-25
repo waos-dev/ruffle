@@ -115,7 +115,7 @@ impl RuffleGui {
                 let picker = self.dialogs.file_picker();
                 let result = picker.show_dialog(dialog, |d| d.save_file());
                 if let Some(result) = result {
-                    tokio::spawn(async move {
+                    crate::task::spawn(async move {
                         let Some(handle) = result.await else {
                             return;
                         };
