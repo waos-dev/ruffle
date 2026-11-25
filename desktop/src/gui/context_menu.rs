@@ -1,11 +1,10 @@
-use crate::custom_event::RuffleEvent;
+use crate::custom_event::{RuffleEvent, RuffleEventSender};
 use egui::{
     Align, Area, Button, Checkbox, Color32, Frame, Id, Key, KeyboardShortcut, Layout, Modifiers,
     Order, Pos2, Stroke, Style, Widget, vec2,
 };
 use ruffle_core::{ContextMenuItem, PlayerEvent};
 use unic_langid::LanguageIdentifier;
-use winit::event_loop::EventLoopProxy;
 
 use super::text;
 
@@ -32,7 +31,7 @@ impl ContextMenu {
         &mut self,
         locale: &LanguageIdentifier,
         egui_ctx: &egui::Context,
-        event_loop: &EventLoopProxy<RuffleEvent>,
+        event_loop: &RuffleEventSender,
         fullscreen: bool,
     ) -> bool {
         let mut item_clicked = false;

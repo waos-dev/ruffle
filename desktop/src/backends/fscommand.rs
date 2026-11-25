@@ -1,10 +1,9 @@
-use crate::custom_event::RuffleEvent;
+use crate::custom_event::{RuffleEvent, RuffleEventSender};
 
 use ruffle_core::external::FsCommandProvider;
-use winit::event_loop::EventLoopProxy;
 
 pub struct DesktopFSCommandProvider {
-    pub event_loop: EventLoopProxy<RuffleEvent>,
+    pub event_loop: RuffleEventSender,
 }
 
 impl FsCommandProvider for DesktopFSCommandProvider {

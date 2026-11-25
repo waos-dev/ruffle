@@ -1,5 +1,5 @@
 use super::{LocalizableText, text};
-use crate::custom_event::RuffleEvent;
+use crate::custom_event::{RuffleEvent, RuffleEventSender};
 use crate::gui::DialogDescriptor;
 use crate::gui::dialogs::select_path_dialog::{
     SelectPathDialogConfiguration, SelectPathDialogResult,
@@ -12,7 +12,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Weak};
 use tokio::sync::oneshot;
 use walkdir::{DirEntry, WalkDir};
-use winit::{event_loop::EventLoopProxy, window::Window};
+use winit::window::Window;
 
 #[derive(Clone)]
 pub struct FilePicker {
@@ -20,7 +20,7 @@ pub struct FilePicker {
 }
 
 struct FilePickerData {
-    event_loop: EventLoopProxy<RuffleEvent>,
+    event_loop: RuffleEventSender,
     parent: Weak<Window>,
     picking: AtomicBool,
     preferences: GlobalPreferences,
@@ -30,7 +30,7 @@ impl FilePicker {
     pub fn new(
         parent: Weak<Window>,
         preferences: GlobalPreferences,
-        event_loop: EventLoopProxy<RuffleEvent>,
+        event_loop: RuffleEventSender,
     ) -> Self {
         Self {
             data: Arc::new(FilePickerData {

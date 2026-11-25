@@ -9,10 +9,9 @@ use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use tokio::sync::oneshot;
 use url::Url;
-use winit::event_loop::EventLoopProxy;
 
 use crate::cli::{FilesystemAccessMode, OpenUrlMode};
-use crate::custom_event::RuffleEvent;
+use crate::custom_event::{RuffleEvent, RuffleEventSender};
 use crate::gui::DialogDescriptor;
 use crate::gui::dialogs::filesystem_access_dialog::{
     FilesystemAccessDialogConfiguration, FilesystemAccessDialogResult,
@@ -85,7 +84,7 @@ pub struct DesktopNavigatorInterface {
     preferences: GlobalPreferences,
 
     // Arc + Mutex due to macOS
-    event_loop: Arc<Mutex<EventLoopProxy<RuffleEvent>>>,
+    event_loop: Arc<Mutex<RuffleEventSender>>,
 
     filesystem_access_mode: FilesystemAccessMode,
 
@@ -95,7 +94,7 @@ pub struct DesktopNavigatorInterface {
 impl DesktopNavigatorInterface {
     pub fn new(
         preferences: GlobalPreferences,
-        event_loop: EventLoopProxy<RuffleEvent>,
+        event_loop: RuffleEventSender,
         initial_allow_list: PathAllowList,
         filesystem_access_mode: FilesystemAccessMode,
     ) -> Self {

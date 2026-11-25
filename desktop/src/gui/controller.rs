@@ -1,7 +1,7 @@
 use super::dialogs::export_bundle_dialog::ExportBundleDialogConfiguration;
 use super::{DialogDescriptor, FilePicker};
 use crate::backends::DesktopUiBackend;
-use crate::custom_event::RuffleEvent;
+use crate::custom_event::RuffleEventSender;
 use crate::gui::movie::{MovieView, MovieViewRenderer};
 use crate::gui::theme::ThemeController;
 use crate::gui::{MENU_HEIGHT, RuffleGui};
@@ -26,7 +26,6 @@ use std::time::{Duration, Instant};
 use url::Url;
 use winit::dpi::{PhysicalPosition, PhysicalSize};
 use winit::event::WindowEvent;
-use winit::event_loop::EventLoopProxy;
 use winit::keyboard::{Key, NamedKey};
 use winit::window::{ImePurpose as WinitImePurpose, Theme, Window};
 
@@ -55,7 +54,7 @@ pub struct GuiController {
 impl GuiController {
     pub fn new(
         window: Arc<Window>,
-        event_loop: EventLoopProxy<RuffleEvent>,
+        event_loop: RuffleEventSender,
         preferences: GlobalPreferences,
         font_database: &Database,
         initial_movie_url: Option<Url>,

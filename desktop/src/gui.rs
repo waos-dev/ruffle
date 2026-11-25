@@ -20,7 +20,7 @@ pub use picker::FilePicker;
 use ruffle_frontend_utils::content::ContentDescriptor;
 pub use theme::ThemePreference;
 
-use crate::custom_event::RuffleEvent;
+use crate::custom_event::RuffleEventSender;
 use crate::gui::context_menu::ContextMenu;
 use crate::player::LaunchOptions;
 use crate::preferences::GlobalPreferences;
@@ -32,7 +32,6 @@ use ruffle_core::debug_ui::Message as DebugMessage;
 use ruffle_core::{Player, PlayerEvent};
 use std::sync::{MutexGuard, Weak};
 use std::{fs, mem};
-use winit::event_loop::EventLoopProxy;
 
 /// Size of the top menu bar in pixels.
 /// This is the offset at which the movie will be shown,
@@ -41,7 +40,7 @@ pub const MENU_HEIGHT: u32 = 24;
 
 /// The main controller for the Ruffle GUI.
 pub struct RuffleGui {
-    event_loop: EventLoopProxy<RuffleEvent>,
+    event_loop: RuffleEventSender,
     context_menu: Option<ContextMenu>,
     dialogs: Dialogs,
     menu_bar: MenuBar,
@@ -53,7 +52,7 @@ pub struct RuffleGui {
 impl RuffleGui {
     fn new(
         window: Weak<winit::window::Window>,
-        event_loop: EventLoopProxy<RuffleEvent>,
+        event_loop: RuffleEventSender,
         default_content: Option<ContentDescriptor>,
         default_launch_options: LaunchOptions,
         preferences: GlobalPreferences,

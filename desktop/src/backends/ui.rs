@@ -1,5 +1,5 @@
 use crate::cli::OpenUrlMode;
-use crate::custom_event::RuffleEvent;
+use crate::custom_event::{RuffleEvent, RuffleEventSender};
 use crate::gui::dialogs::message_dialog::MessageDialogConfiguration;
 use crate::gui::{DialogDescriptor, FilePicker, LocalizableText};
 use crate::preferences::GlobalPreferences;
@@ -23,7 +23,6 @@ use std::str::FromStr;
 use std::sync::Arc;
 use tokio::io::AsyncReadExt;
 use url::Url;
-use winit::event_loop::EventLoopProxy;
 use winit::raw_window_handle::HasDisplayHandle;
 use winit::window::{Fullscreen, Window};
 
@@ -152,7 +151,7 @@ pub struct DesktopUiBackend {
     clipboard: Clipboard,
     window: Arc<Window>,
 
-    event_loop: EventLoopProxy<RuffleEvent>,
+    event_loop: RuffleEventSender,
     cursor_visible: bool,
     preferences: GlobalPreferences,
     preferred_cursor: MouseCursor,
@@ -171,7 +170,7 @@ pub struct DesktopUiBackend {
 impl DesktopUiBackend {
     pub fn new(
         window: Arc<Window>,
-        event_loop: EventLoopProxy<RuffleEvent>,
+        event_loop: RuffleEventSender,
         font_database: Rc<fontdb::Database>,
         preferences: GlobalPreferences,
         file_picker: FilePicker,
@@ -386,11 +385,14 @@ impl UiBackend for DesktopUiBackend {
         register: &mut dyn FnMut(FontDefinition),
     ) -> Vec<FontQuery> {
         cfg_select! {
-            all(unix, feature = "fontconfig") => {
-                fontconfig::sort_device_fonts(query, register, self.device_font_renderer, &self.font_atlases)
-                    .inspect_err(|err| tracing::error!("Cannot sort device fonts: {err}"))
-                    .unwrap_or_default()
-            }
+            all(unix, feature = "fontconfig") => fontconfig::sort_device_fonts(
+                query,
+                register,
+                self.device_font_renderer,
+                &self.font_atlases,
+            )
+            .inspect_err(|err| tracing::error!("Cannot sort device fonts: {err}"))
+            .unwrap_or_default(),
             _ => Vec::new(),
         }
     }

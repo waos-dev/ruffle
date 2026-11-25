@@ -2,6 +2,7 @@
 
 use ruffle_core::events::PlayerNotification;
 use ruffle_frontend_utils::content::ContentDescriptor;
+use std::sync::Arc;
 
 use crate::gui::DialogDescriptor;
 use crate::player::{LaunchOptions, PlayerRunnable};
@@ -9,6 +10,32 @@ use crate::player::{LaunchOptions, PlayerRunnable};
 pub enum OpenType {
     File,
     Directory,
+}
+
+/// Sends [`RuffleEvent`]s to the app's event loop, from the GUI, the player and its backends.
+///
+/// They send through this instead of naming the windowing library's own proxy, so none of
+/// them depends on which event loop the app runs.
+#[derive(Clone)]
+pub struct RuffleEventSender(Arc<SendEvent>);
+
+type SendEvent = dyn Fn(RuffleEvent) -> Result<(), EventLoopClosed> + Send + Sync;
+
+/// The event loop is gone, so the event was not delivered.
+#[derive(Debug, thiserror::Error)]
+#[error("The event loop is closed")]
+pub struct EventLoopClosed;
+
+impl RuffleEventSender {
+    pub fn new(
+        send: impl Fn(RuffleEvent) -> Result<(), EventLoopClosed> + Send + Sync + 'static,
+    ) -> Self {
+        Self(Arc::new(send))
+    }
+
+    pub fn send_event(&self, event: RuffleEvent) -> Result<(), EventLoopClosed> {
+        (self.0)(event)
+    }
 }
 
 /// User-defined events.

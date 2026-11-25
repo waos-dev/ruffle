@@ -1,13 +1,15 @@
 use crate::gui::widgets::path_or_url_field::PathOrUrlField;
 use crate::gui::{FilePicker, LocalizableText, text};
 use crate::preferences::GlobalPreferences;
-use crate::{custom_event::RuffleEvent, player::LaunchOptions};
+use crate::{
+    custom_event::{RuffleEvent, RuffleEventSender},
+    player::LaunchOptions,
+};
 use egui::{Align2, Button, Grid, Label, Layout, Sense, Ui, Widget, Window};
 use egui_extras::{Column, TableBuilder};
 use ruffle_frontend_utils::bookmarks::Bookmark;
 use ruffle_frontend_utils::content::ContentDescriptor;
 use unic_langid::LanguageIdentifier;
-use winit::event_loop::EventLoopProxy;
 
 pub struct BookmarkAddDialog {
     preferences: GlobalPreferences,
@@ -103,7 +105,7 @@ struct SelectedBookmark {
 }
 
 pub struct BookmarksDialog {
-    event_loop: EventLoopProxy<RuffleEvent>,
+    event_loop: RuffleEventSender,
     picker: FilePicker,
     preferences: GlobalPreferences,
     selected_bookmark: Option<SelectedBookmark>,
@@ -113,7 +115,7 @@ impl BookmarksDialog {
     pub fn new(
         preferences: GlobalPreferences,
         picker: FilePicker,
-        event_loop: EventLoopProxy<RuffleEvent>,
+        event_loop: RuffleEventSender,
     ) -> Self {
         Self {
             picker,

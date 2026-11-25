@@ -10,7 +10,7 @@ mod preferences_dialog;
 pub mod select_path_dialog;
 mod volume_controls;
 
-use crate::custom_event::RuffleEvent;
+use crate::custom_event::RuffleEventSender;
 use crate::player::LaunchOptions;
 use crate::preferences::GlobalPreferences;
 use bookmarks_dialog::{BookmarkAddDialog, BookmarksDialog};
@@ -27,12 +27,11 @@ use select_path_dialog::{SelectPathDialog, SelectPathDialogConfiguration};
 use std::{collections::VecDeque, sync::Weak};
 use unic_langid::LanguageIdentifier;
 use volume_controls::VolumeControls;
-use winit::event_loop::EventLoopProxy;
 
 use super::FilePicker;
 
 pub struct Dialogs {
-    event_loop: EventLoopProxy<RuffleEvent>,
+    event_loop: RuffleEventSender,
     window: Weak<winit::window::Window>,
 
     picker: FilePicker,
@@ -78,7 +77,7 @@ impl Dialogs {
         player_options: LaunchOptions,
         default_content: Option<ContentDescriptor>,
         window: Weak<winit::window::Window>,
-        event_loop: EventLoopProxy<RuffleEvent>,
+        event_loop: RuffleEventSender,
     ) -> Self {
         let picker = FilePicker::new(window.clone(), preferences.clone(), event_loop.clone());
         Self {
@@ -132,7 +131,7 @@ impl Dialogs {
         &mut self,
         opt: LaunchOptions,
         content_descriptor: Option<ContentDescriptor>,
-        event_loop: EventLoopProxy<RuffleEvent>,
+        event_loop: RuffleEventSender,
     ) {
         self.is_open_dialog_visible = false;
         self.open_dialog =

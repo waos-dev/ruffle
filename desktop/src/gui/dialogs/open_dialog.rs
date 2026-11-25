@@ -1,4 +1,4 @@
-use crate::custom_event::RuffleEvent;
+use crate::custom_event::{RuffleEvent, RuffleEventSender};
 use crate::gui::widgets::path_or_url_field::PathOrUrlField;
 use crate::gui::{FilePicker, LocalizableText, text};
 use crate::player::LaunchOptions;
@@ -18,11 +18,10 @@ use std::ops::RangeInclusive;
 use std::time::Duration;
 use unic_langid::LanguageIdentifier;
 use url::Url;
-use winit::event_loop::EventLoopProxy;
 
 pub struct OpenDialog {
     options: LaunchOptions,
-    event_loop: EventLoopProxy<RuffleEvent>,
+    event_loop: RuffleEventSender,
 
     // These are outside of PlayerOptions as it can be an invalid value (ie URL) during typing,
     // and we don't want to clear the value if the user, ie, toggles the checkbox.
@@ -54,7 +53,7 @@ impl OpenDialog {
         defaults: LaunchOptions,
         default_content: Option<ContentDescriptor>,
         picker: FilePicker,
-        event_loop: EventLoopProxy<RuffleEvent>,
+        event_loop: RuffleEventSender,
     ) -> Self {
         let spoof_url = OptionalField::new(
             defaults.player.spoof_url.as_ref().map(Url::to_string),

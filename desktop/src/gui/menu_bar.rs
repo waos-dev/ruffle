@@ -1,4 +1,4 @@
-use crate::custom_event::{OpenType, RuffleEvent};
+use crate::custom_event::{OpenType, RuffleEvent, RuffleEventSender};
 use crate::gui::dialogs::Dialogs;
 use crate::gui::{DebugMessage, text};
 use crate::player::LaunchOptions;
@@ -11,10 +11,9 @@ use ruffle_frontend_utils::content::ContentDescriptor;
 use ruffle_frontend_utils::recents::Recent;
 use ruffle_render::quality::StageQuality;
 use unic_langid::LanguageIdentifier;
-use winit::event_loop::EventLoopProxy;
 
 pub struct MenuBar {
-    event_loop: EventLoopProxy<RuffleEvent>,
+    event_loop: RuffleEventSender,
     default_launch_options: LaunchOptions,
     preferences: GlobalPreferences,
 
@@ -34,7 +33,7 @@ impl MenuBar {
     const SHORTCUT_QUIT: KeyboardShortcut = KeyboardShortcut::new(Modifiers::COMMAND, Key::Q);
 
     pub fn new(
-        event_loop: EventLoopProxy<RuffleEvent>,
+        event_loop: RuffleEventSender,
         default_launch_options: LaunchOptions,
         preferences: GlobalPreferences,
     ) -> Self {

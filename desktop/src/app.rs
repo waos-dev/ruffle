@@ -1,4 +1,4 @@
-use crate::custom_event::{OpenType, RuffleEvent};
+use crate::custom_event::{EventLoopClosed, OpenType, RuffleEvent, RuffleEventSender};
 use crate::gui::{GuiController, MENU_HEIGHT};
 use crate::player::{LaunchOptions, PlayerController};
 use crate::preferences::GlobalPreferences;
@@ -14,12 +14,12 @@ use ruffle_core::events::{ImeEvent, ImeNotification, PlayerNotification};
 use ruffle_core::swf::HeaderExt;
 use ruffle_frontend_utils::content::ContentDescriptor;
 use ruffle_render::backend::ViewportDimensions;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 use std::time::Instant;
 use winit::application::ApplicationHandler;
 use winit::dpi::{LogicalSize, PhysicalPosition, PhysicalSize, Size};
 use winit::event::{ElementState, Ime, KeyEvent, Modifiers, StartCause, WindowEvent};
-use winit::event_loop::{ActiveEventLoop, ControlFlow, EventLoop, EventLoopProxy};
+use winit::event_loop::{ActiveEventLoop, ControlFlow, EventLoop};
 use winit::keyboard::{Key, NamedKey};
 use winit::window::{Fullscreen, Icon, WindowAttributes, WindowId};
 
@@ -48,7 +48,7 @@ struct MainWindow {
     loaded: LoadingState,
     time: Instant,
     next_frame_time: Option<Instant>,
-    event_loop_proxy: EventLoopProxy<RuffleEvent>,
+    event_loop_proxy: RuffleEventSender,
 }
 
 impl MainWindow {
@@ -439,7 +439,7 @@ pub struct App {
     main_window: Option<MainWindow>,
     runtime: Option<tokio::runtime::Runtime>,
     gilrs: Option<Gilrs>,
-    event_loop_proxy: EventLoopProxy<RuffleEvent>,
+    event_loop_proxy: RuffleEventSender,
     preferences: GlobalPreferences,
     font_database: fontdb::Database,
 }
@@ -464,7 +464,17 @@ impl App {
                 tracing::warn!("Gamepad support could not be initialized: {err}");
             })
             .ok();
-        let event_loop_proxy = event_loop.create_proxy();
+        let event_loop_proxy = {
+            // Behind a lock, so the sender can be shared between threads wherever winit's
+            // proxy can only be sent to one.
+            let proxy = Mutex::new(event_loop.create_proxy());
+            RuffleEventSender::new(move |event| {
+                let proxy = proxy
+                    .lock()
+                    .unwrap_or_else(|poisoned| poisoned.into_inner());
+                proxy.send_event(event).map_err(|_| EventLoopClosed)
+            })
+        };
         let runtime = tokio::runtime::Runtime::new()?;
 
         Ok((

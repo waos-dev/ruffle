@@ -4,7 +4,7 @@ use crate::backends::{
 };
 use crate::cli::FilesystemAccessMode;
 use crate::cli::GameModePreference;
-use crate::custom_event::RuffleEvent;
+use crate::custom_event::{RuffleEvent, RuffleEventSender};
 use crate::gui::{FilePicker, MovieView};
 use crate::preferences::GlobalPreferences;
 use crate::{CALLSTACK, RENDER_INFO, SWF_INFO};
@@ -35,7 +35,6 @@ use std::rc::Rc;
 use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::Duration;
 use url::Url;
-use winit::event_loop::EventLoopProxy;
 use winit::window::Window;
 
 /// Options used when creating a Player (& passed through to a PlayerBuilder).
@@ -131,7 +130,7 @@ impl ActivePlayer {
     #[expect(clippy::too_many_arguments)]
     pub fn new(
         opt: &LaunchOptions,
-        event_loop: EventLoopProxy<RuffleEvent>,
+        event_loop: RuffleEventSender,
         content_descriptor: &ContentDescriptor,
         window: Arc<Window>,
         descriptors: Arc<Descriptors>,
@@ -440,7 +439,7 @@ impl ActivePlayer {
 /// responsible for either creating, destroying or communicating with that player.
 pub struct PlayerController {
     player: Option<ActivePlayer>,
-    event_loop: EventLoopProxy<RuffleEvent>,
+    event_loop: RuffleEventSender,
     window: Arc<Window>,
     descriptors: Arc<Descriptors>,
     font_database: Rc<fontdb::Database>,
@@ -450,7 +449,7 @@ pub struct PlayerController {
 
 impl PlayerController {
     pub fn new(
-        event_loop: EventLoopProxy<RuffleEvent>,
+        event_loop: RuffleEventSender,
         window: Arc<Window>,
         descriptors: Arc<Descriptors>,
         font_database: fontdb::Database,
@@ -547,7 +546,7 @@ pub struct PlayerRunnable(async_task::Runnable<PlayerId>);
 
 /// A bare-bones executor that schedules tasks on the winit event loop.
 struct WinitExecutor {
-    event_loop: EventLoopProxy<RuffleEvent>,
+    event_loop: RuffleEventSender,
     player_id: PlayerId,
 }
 
