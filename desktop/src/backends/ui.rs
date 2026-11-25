@@ -85,6 +85,10 @@ async fn read_file(path: &Path) -> (Option<std::fs::Metadata>, Vec<u8>) {
 
 /// WaOS port: a picked file is read in place, WaOS having no runtime of tokio's to read it on.
 #[cfg(target_os = "wasi")]
+#[expect(
+    clippy::unused_async,
+    reason = "async as the desktop's twin is, which its one caller awaits"
+)]
 async fn read_file(path: &Path) -> (Option<std::fs::Metadata>, Vec<u8>) {
     let metadata = std::fs::metadata(path)
         .inspect_err(|err| {

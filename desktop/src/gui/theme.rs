@@ -156,6 +156,10 @@ impl ThemeController {
     }
 
     #[cfg(not(target_os = "linux"))]
+    #[expect(
+        clippy::unused_async,
+        reason = "async as the Linux twin is, which awaits D-Bus, and which its callers await"
+    )]
     pub async fn get_system_theme(&self) -> Result<Theme, Box<dyn Error>> {
         #[derive(thiserror::Error, Debug)]
         #[error("Unsupported operation")]

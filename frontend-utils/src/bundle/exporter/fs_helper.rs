@@ -90,12 +90,13 @@ impl<P: AsRef<Path>> FilesystemHelper<P> {
         let bundle_path = self.real_path_to_bundle_path(real_path)?;
         let bundle_path = PathBuf::from("/").join(bundle_path);
 
-        #[cfg(unix)]
+        // WaOS port: a WASI path is a Unix one, as `Url::from_file_path` takes it there.
+        #[cfg(any(unix, target_os = "wasi"))]
         return Url::from_file_path(&bundle_path)
             .map_err(|_| FilesystemHelperError::PathNotRepresentableAsUrl(real_path.to_owned()));
 
         // Non-unix paths are weird, just manually create a file:///a/b/c URL
-        #[cfg(not(unix))]
+        #[cfg(not(any(unix, target_os = "wasi")))]
         {
             fn path_to_url_non_unix(path: &Path) -> Result<Url, ()> {
                 let mut url_path = String::new();

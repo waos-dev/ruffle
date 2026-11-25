@@ -35,6 +35,7 @@ use rfd::MessageDialogResult;
 use ruffle_core::StaticCallstack;
 use std::cell::RefCell;
 use std::env;
+#[cfg(not(target_os = "wasi"))]
 use std::fs::File;
 use std::panic::PanicHookInfo;
 use tracing_subscriber::fmt::Layer;
@@ -229,6 +230,7 @@ fn main() -> Result<(), Error> {
 /// This exists because in older versions Ruffle created log files in the config directory.
 ///
 /// TODO Remove this after some time.
+#[cfg(not(target_os = "wasi"))]
 fn migrate_logs(
     preferences: &GlobalPreferences,
     log_path: &std::path::Path,

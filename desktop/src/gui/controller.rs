@@ -13,10 +13,11 @@ use fontdb::{Database, Family, Query, Source};
 use ruffle_core::events::{ImeCursorArea, ImePurpose};
 use ruffle_core::{Player, PlayerEvent};
 use ruffle_frontend_utils::content::ContentDescriptor;
-use ruffle_render_wgpu::backend::{
-    WgpuRenderBackend, create_wgpu_instance, request_adapter_and_device,
-};
+#[cfg(not(target_os = "wasi"))]
+use ruffle_render_wgpu::backend::create_wgpu_instance;
+use ruffle_render_wgpu::backend::{WgpuRenderBackend, request_adapter_and_device};
 use ruffle_render_wgpu::descriptors::Descriptors;
+#[cfg(not(target_os = "wasi"))]
 use ruffle_render_wgpu::utils::{format_list, get_backend_names};
 use std::any::Any;
 use std::fs::File;
@@ -131,6 +132,13 @@ impl GuiController {
         );
         egui_winit.set_max_texture_side(descriptors.limits.max_texture_dimension_2d as usize);
 
+        #[cfg_attr(
+            target_os = "wasi",
+            expect(
+                clippy::arc_with_non_send_sync,
+                reason = "WaOS port: the renderer shares these through `Arc` on every target; on WaOS's one thread, where wgpu's types are neither `Send` nor `Sync`, nothing crosses threads"
+            )
+        )]
         let movie_view_renderer = Arc::new(MovieViewRenderer::new(
             &descriptors.device,
             surface_format,
@@ -148,6 +156,13 @@ impl GuiController {
                 predictable_texture_filtering: false,
             },
         );
+        #[cfg_attr(
+            target_os = "wasi",
+            expect(
+                clippy::arc_with_non_send_sync,
+                reason = "WaOS port: the renderer shares these through `Arc` on every target; on WaOS's one thread, where wgpu's types are neither `Send` nor `Sync`, nothing crosses threads"
+            )
+        )]
         let descriptors = Arc::new(descriptors);
         let gui = RuffleGui::new(
             Arc::downgrade(&window),

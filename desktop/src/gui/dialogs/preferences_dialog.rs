@@ -3,7 +3,10 @@ use crate::cli::{GameModePreference, OpenUrlMode};
 use crate::gui::{ThemePreference, available_languages, optional_text, text};
 use crate::log::FilenamePattern;
 use crate::preferences::{GlobalPreferences, storage::StorageBackend};
-use egui::{Align2, Button, Checkbox, ComboBox, DragValue, Grid, Ui, Widget, Window};
+#[cfg(feature = "external_video")]
+use egui::Checkbox;
+use egui::{Align2, Button, ComboBox, DragValue, Grid, Ui, Widget, Window};
+#[cfg(not(target_os = "wasi"))]
 use ruffle_render_wgpu::backend::create_wgpu_instance;
 use ruffle_render_wgpu::clap::{GraphicsBackend, PowerPreference};
 use std::borrow::Cow;
@@ -35,6 +38,7 @@ pub struct PreferencesDialog {
 
     enable_openh264: bool,
     enable_openh264_changed: bool,
+    #[cfg(feature = "external_video")]
     openh264_license_visible: bool,
 
     recent_limit: usize,
@@ -90,6 +94,7 @@ impl PreferencesDialog {
 
             enable_openh264: preferences.openh264_enabled(),
             enable_openh264_changed: false,
+            #[cfg(feature = "external_video")]
             openh264_license_visible: false,
 
             recent_limit: preferences.recent_limit(),
@@ -155,6 +160,7 @@ impl PreferencesDialog {
 
                             self.show_audio_preferences(locale, ui);
 
+                            #[cfg(feature = "external_video")]
                             self.show_video_preferences(egui_ctx, locale, ui);
 
                             self.show_log_preferences(locale, ui);
@@ -473,6 +479,7 @@ impl PreferencesDialog {
         ui.end_row();
     }
 
+    #[cfg(feature = "external_video")]
     fn show_video_preferences(
         &mut self,
         egui_ctx: &egui::Context,
