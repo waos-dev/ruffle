@@ -13,6 +13,8 @@ mod custom_event;
 mod dbus;
 mod gui;
 mod log;
+#[cfg(target_os = "wasi")]
+mod open_requests;
 mod player;
 mod preferences;
 mod task;

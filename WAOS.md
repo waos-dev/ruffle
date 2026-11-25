@@ -27,6 +27,7 @@ What the desktop program itself chooses by target, each at one place:
 - `frontend-utils/src/backends/navigator/`: the navigator is one for both, and what differs is in two modules. `http.rs`: a request is sent by reqwest, on a desktop handed to tokio's runtime, on WaOS awaited where it is asked for; and a proxy the app names is used on a desktop alone. `tcp.rs`: a movie's TCP connection is tokio's on a desktop (`tcp/desktop.rs`) and one of WASI's sockets on WaOS (`tcp/waos.rs`), where its life runs as one of the navigator's own tasks.
 - `desktop/Cargo.toml` and `frontend-utils/Cargo.toml`: cpal, the log file's library, tokio's runtime and sockets, async-io and egui-wgpu's own GPU backends are named for a desktop alone.
 - The GPU instance is WaOS's one (`gui/controller.rs`), the log goes to stdout (`main.rs`), a picked file is read in place (`backends/ui.rs`), and no gamepad library starts (`app.rs`).
+- `desktop/src/open_requests.rs`: a movie the user opens with Ruffle, from WaOS or the system, arrives as an open request on WaOS, the first one too, where a desktop has the command line's argument at the start only.
 
 Built in `desktop/` with `waos run --release --no-default-features --features software_video,lzma`.
 
@@ -34,11 +35,13 @@ Checked in a headless WaOS on a Mac: the window opens with the menu bar and the 
 
 The network, checked in a headless WaOS on a Mac with Ruffle's own test movies and their expected traces: a movie opened by an `http://` address plays, and what it loads by a relative address is fetched there, by GET and by POST (`avm1/load_vars`); the same movie from an `https://` address on the internet; an XMLSocket and a `flash.net.Socket` connect, send, receive and close against a server playing the tests' `socket.json` (`avm1/xml_socket`, `avm2/socket_connect`), after Ruffle's own dialog asks whether the movie may connect; and a refused connection reaches the movie as a failed one. A server on this computer is behind WaOS's local network switch, off by default: `waos settings set local-network on`.
 
-Checked in the WaOS app on a Mac: "Open File" shows the system's panel on the window, and the file picked there plays; full screen from the View menu and back with Escape; a link from the Help menu opens in the browser; text copied in a field reaches the system's clipboard.
+Checked in the WaOS app on a Mac: "Open File" shows the system's panel on the window, and the file picked there plays; full screen from the View menu and back with Escape; a link from the Help menu opens in the browser; text copied in a field reaches the system's clipboard, and text copied in another app pastes into one; a `.swf` opened with Ruffle (`waos open <file> --program <id>`) starts it with that movie, and one opened while it runs replaces the movie playing.
 
 What WaOS does not offer an app, so Ruffle does not have it there: a proxy of the app's own choosing (`--proxy` and the Open dialog's proxy are not used, and the log says so; WaOS sends requests through the system's proxy), and HTTP/2 (WaOS's client speaks HTTP/1.1).
 
-Not there yet: gamepads; pasting what another app copied, which waits on WaOS (the paste works once WaOS itself has been in front since the copy). Not checked: Export, a link a movie opens (the Help menu's links open), and the dialogs a movie opens other than the one for a socket.
+Typing: text from WaOS's text input, through winit's input method events, checked in a headless WaOS with `waos ui type` (Japanese and accented text in the Open dialog's field and in a movie's input field), with Ruffle's "Input Method" preference on. A composition with a real input method is not checked yet.
+
+Not there yet: gamepads; dragging a `.swf` onto the window, and Ruffle offered by the system for `.swf` files, which WaOS has no way to declare yet. Not checked: Export, a link a movie opens (the Help menu's links open), and the dialogs a movie opens other than the one for a socket.
 
 ## What works, and what does not yet
 

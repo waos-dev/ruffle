@@ -579,6 +579,14 @@ impl ApplicationHandler<RuffleEvent> for App {
                 gui.show_open_dialog();
             }
 
+            // WaOS port: a movie the user opens with Ruffle, the first one among them, arrives
+            // as an open request rather than as the command line's argument.
+            #[cfg(target_os = "wasi")]
+            crate::task::spawn(crate::open_requests::open_each(
+                event_loop_proxy.clone(),
+                preferences.clone(),
+            ));
+
             let mut loaded = LoadingState::Loading;
 
             if movie_url.is_none() {
