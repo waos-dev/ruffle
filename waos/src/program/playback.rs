@@ -10,12 +10,11 @@
 //! The invariant: the player's lock is taken for one event and let go before the next is awaited
 //! (`program`'s invariant).
 
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use ruffle_core::{FloatDuration, Player, PlayerEvent, ViewportDimensions};
-use wasdk::views::{Metrics, ViewEvent, ViewFocusState};
-use wasdk_wgpu::SharedView;
+use wasdk::views::{Metrics, View, ViewEvent, ViewFocusState};
 
 use super::gui::Gui;
 use super::keyboard::Keyboard;
@@ -25,7 +24,7 @@ use super::view_target::DrawnFrame;
 /// Plays `player` on `view` until the view is gone, or its user closes a view that has no window.
 pub async fn play(
     player: &Mutex<Player>,
-    view: &SharedView,
+    view: &Arc<View>,
     mut gui: Gui,
     drawn: DrawnFrame,
     queue: &wgpu::Queue,

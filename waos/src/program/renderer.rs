@@ -9,7 +9,7 @@ use std::sync::Arc;
 use ruffle_render_wgpu::backend::{WgpuRenderBackend, request_adapter_and_device};
 use ruffle_render_wgpu::descriptors::Descriptors;
 use ruffle_render_wgpu::target::RenderTarget as _;
-use wasdk_wgpu::SharedView;
+use wasdk::views::View;
 
 use super::view_target::{DrawnFrame, ViewTarget};
 
@@ -29,7 +29,7 @@ pub struct ViewRenderer {
     clippy::arc_with_non_send_sync,
     reason = "Ruffle's renderer takes its descriptors in an `Arc`, as its own crate allows itself"
 )]
-pub async fn on_view(view: &SharedView) -> Result<ViewRenderer, String> {
+pub async fn on_view(view: &Arc<View>) -> Result<ViewRenderer, String> {
     let instance = wasdk_wgpu::instance();
     let surface = instance
         .create_surface(view.clone())

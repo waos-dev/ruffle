@@ -20,9 +20,9 @@ name = "Ruffle"
 # A WaOS program is a WASI component, so everything it is made of is asked for on WASI alone:
 # on any other target the crate is an empty binary, and the workspace's checks pass over it.
 [target.'cfg(target_os = "wasi")'.dependencies]
-wasdk = { git = "https://github.com/waos-dev/waos", rev = "d9983bb10bfcb9a3ebd8006e96deb513cf24933b" }
-wasdk-wgpu = { git = "https://github.com/waos-dev/waos", rev = "d9983bb10bfcb9a3ebd8006e96deb513cf24933b" }
-wasdk-adapter-egui = { git = "https://github.com/waos-dev/waos", rev = "d9983bb10bfcb9a3ebd8006e96deb513cf24933b" }
+wasdk = { git = "https://github.com/waos-dev/waos", tag = "v0.8.0" }
+wasdk-wgpu = { git = "https://github.com/waos-dev/waos", tag = "v0.8.0" }
+wasdk-adapter-egui = { git = "https://github.com/waos-dev/waos", tag = "v0.8.0" }
 ruffle_core = { path = "../core", features = ["audio", "mp3", "aac", "nellymoser", "default_font", "default_compatibility_rules", "lzma"] }
 ruffle_render = { path = "../render" }
 ruffle_render_wgpu = { path = "../render/wgpu" }

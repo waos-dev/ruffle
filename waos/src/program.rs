@@ -34,8 +34,8 @@ use ruffle_core::tag_utils::SwfMovieData;
 use ruffle_core::{Player, PlayerBuilder};
 use ruffle_render_wgpu::backend::WgpuRenderBackend;
 use tracing_subscriber::EnvFilter;
+use wasdk::views::View;
 use wasdk::windows::Size;
-use wasdk_wgpu::SharedView;
 
 use audio::WaosAudioBackend;
 use gui::Gui;
@@ -61,7 +61,13 @@ pub async fn run() -> Result<(), String> {
     let descriptors = Arc::clone(&renderer.descriptors);
     let gui = Gui::new(&view, Arc::clone(&descriptors), renderer.format);
     let drawn = renderer.drawn.clone();
-    let player = build_player(movie, &movie_path, &view, renderer.backend);
+    let player = build_player(
+        movie,
+        &movie_path,
+        &view,
+        renderer.backend,
+        &descriptors.device,
+    );
     playback::play(&player, &view, gui, drawn, &descriptors.queue).await
 }
 
@@ -84,12 +90,14 @@ fn stage_size(movie: &SwfMovieData) -> Size {
     }
 }
 
-/// Ruffle's player for `movie`, read from `movie_path`, drawing on `view` through `renderer`.
+/// Ruffle's player for `movie`, read from `movie_path`, drawing on `view` through `renderer`, whose
+/// GPU is `device`'s.
 fn build_player(
     movie: SwfMovieData,
     movie_path: &Path,
-    view: &SharedView,
+    view: &Arc<View>,
     renderer: WgpuRenderBackend<ViewTarget>,
+    device: &wgpu::Device,
 ) -> Arc<Mutex<Player>> {
     let metrics = view.metrics();
     let builder = PlayerBuilder::new()
@@ -98,8 +106,8 @@ fn build_player(
         .with_viewport_dimensions(metrics.width, metrics.height, metrics.device_pixel_ratio)
         .with_navigator(WaosNavigatorBackend::beside(movie_path))
         .with_storage(Box::new(WaosStorageBackend::new()))
-        .with_ui(WaosUiBackend::new(view.clone()))
-        .with_video(WaosVideoBackend::new())
+        .with_ui(WaosUiBackend::new(Arc::clone(view)))
+        .with_video(WaosVideoBackend::new(device.clone()))
         .with_autoplay(true);
     with_sound(builder).build()
 }

@@ -33,13 +33,16 @@ enum Stream {
 pub struct WaosVideoBackend {
     streams: SlotMap<VideoStreamHandle, Stream>,
     software: SoftwareVideoBackend,
+    /// The device whose GPU WaOS's decoders decode for: the renderer's.
+    device: wgpu::Device,
 }
 
 impl WaosVideoBackend {
-    pub fn new() -> Self {
+    pub fn new(device: wgpu::Device) -> Self {
         WaosVideoBackend {
             streams: SlotMap::with_key(),
             software: SoftwareVideoBackend::new(),
+            device,
         }
     }
 
@@ -59,7 +62,7 @@ impl VideoBackend for WaosVideoBackend {
         filter: VideoDeblocking,
     ) -> Result<VideoStreamHandle, Error> {
         let stream = if codec == VideoCodec::H264 {
-            Stream::H264(H264Stream::start())
+            Stream::H264(H264Stream::start(&self.device))
         } else {
             let handle = self
                 .software

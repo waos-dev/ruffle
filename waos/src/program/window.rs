@@ -1,11 +1,12 @@
 //! The program's window: asked of WaOS, which answers with the view it holds.
 
+use std::sync::Arc;
+
 use wasdk::views::{self, View, ViewChange};
 use wasdk::windows::{Size, WindowConfig};
-use wasdk_wgpu::SharedView;
 
 /// Asks WaOS for a window called `title`, `size` logical points large, and waits for its view.
-pub async fn open(title: &str, size: Size) -> Result<SharedView, String> {
+pub async fn open(title: &str, size: Size) -> Result<Arc<View>, String> {
     // The stream is opened before the request, so the view that arrives for it is not missed.
     let mut changes = views::view_changes();
     let config = WindowConfig::new();
@@ -14,7 +15,7 @@ pub async fn open(title: &str, size: Size) -> Result<SharedView, String> {
     views::request_view(&config, None).map_err(|error| format!("WaOS gave no window: {error}"))?;
     while let Some(change) = changes.next().await {
         if let Some(arrived) = arrived_view(change) {
-            return arrived.map(SharedView::new);
+            return arrived.map(Arc::new);
         }
     }
     Err("the program's views ended before its window arrived".to_owned())

@@ -4,23 +4,24 @@
 //! platform without it: the clipboard is empty and keeps nothing, full screen is refused, no
 //! device font is found beyond the one Ruffle carries, and no file dialog opens for a movie.
 
+use std::sync::Arc;
+
 use ruffle_core::backend::ui::{
     DialogResultFuture, FileFilter, FontDefinition, FullscreenError, LanguageIdentifier,
     MouseCursor, MultiDialogResultFuture, US_ENGLISH, UiBackend,
 };
 use ruffle_core::font::FontQuery;
 use url::Url;
-use wasdk::views::Cursor;
-use wasdk_wgpu::SharedView;
+use wasdk::views::{Cursor, View};
 
 pub struct WaosUiBackend {
-    view: SharedView,
+    view: Arc<View>,
     cursor: MouseCursor,
     cursor_visible: bool,
 }
 
 impl WaosUiBackend {
-    pub fn new(view: SharedView) -> Self {
+    pub fn new(view: Arc<View>) -> Self {
         WaosUiBackend {
             view,
             cursor: MouseCursor::Arrow,
