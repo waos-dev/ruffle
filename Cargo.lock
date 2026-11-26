@@ -205,7 +205,7 @@ dependencies = [
 [[package]]
 name = "arboard"
 version = "3.7.0"
-source = "git+https://github.com/waos-dev/arboard?branch=waos#602a58875a12d60948833c7f497fddb6ad87e245"
+source = "git+https://github.com/waos-dev/arboard?branch=waos-0.8#f9b8b6d2c282564ab817555a6efe44c9cea0a5fa"
 dependencies = [
  "clipboard-win",
  "image",
@@ -1347,12 +1347,12 @@ checksum = "75b325c5dbd37f80359721ad39aca5a29fb04c89279657cffdda8736d0c0b9d2"
 [[package]]
 name = "dpi"
 version = "0.1.1"
-source = "git+https://github.com/waos-dev/winit?branch=waos#16a8e7ff653e870ae10db00a6c890d3e10865cd0"
+source = "git+https://github.com/waos-dev/winit?branch=waos-0.8#c8b87cd0ef867dd63d54caa229efb07d97a74485"
 
 [[package]]
 name = "ecolor"
 version = "0.36.2"
-source = "git+https://github.com/waos-dev/egui?branch=waos#a55e06c14f96904b07cc3545af294496ef58fa31"
+source = "git+https://github.com/waos-dev/egui?branch=waos-0.8#427b6b210c45827153c0ae914167ee14806d5a09"
 dependencies = [
  "bytemuck",
  "emath",
@@ -1361,7 +1361,7 @@ dependencies = [
 [[package]]
 name = "egui"
 version = "0.36.2"
-source = "git+https://github.com/waos-dev/egui?branch=waos#a55e06c14f96904b07cc3545af294496ef58fa31"
+source = "git+https://github.com/waos-dev/egui?branch=waos-0.8#427b6b210c45827153c0ae914167ee14806d5a09"
 dependencies = [
  "accesskit",
  "ahash",
@@ -1380,7 +1380,7 @@ dependencies = [
 [[package]]
 name = "egui-wgpu"
 version = "0.36.2"
-source = "git+https://github.com/waos-dev/egui?branch=waos#a55e06c14f96904b07cc3545af294496ef58fa31"
+source = "git+https://github.com/waos-dev/egui?branch=waos-0.8#427b6b210c45827153c0ae914167ee14806d5a09"
 dependencies = [
  "ahash",
  "bytemuck",
@@ -1399,7 +1399,7 @@ dependencies = [
 [[package]]
 name = "egui-winit"
 version = "0.36.2"
-source = "git+https://github.com/waos-dev/egui?branch=waos#a55e06c14f96904b07cc3545af294496ef58fa31"
+source = "git+https://github.com/waos-dev/egui?branch=waos-0.8#427b6b210c45827153c0ae914167ee14806d5a09"
 dependencies = [
  "arboard",
  "bytemuck",
@@ -1420,7 +1420,7 @@ dependencies = [
 [[package]]
 name = "egui_extras"
 version = "0.36.2"
-source = "git+https://github.com/waos-dev/egui?branch=waos#a55e06c14f96904b07cc3545af294496ef58fa31"
+source = "git+https://github.com/waos-dev/egui?branch=waos-0.8#427b6b210c45827153c0ae914167ee14806d5a09"
 dependencies = [
  "ahash",
  "egui",
@@ -1440,7 +1440,7 @@ checksum = "0e9c71c2167ca323c882b99918929403426e2373ea17242ff5653e0d5e1058be"
 [[package]]
 name = "emath"
 version = "0.36.2"
-source = "git+https://github.com/waos-dev/egui?branch=waos#a55e06c14f96904b07cc3545af294496ef58fa31"
+source = "git+https://github.com/waos-dev/egui?branch=waos-0.8#427b6b210c45827153c0ae914167ee14806d5a09"
 dependencies = [
  "bytemuck",
 ]
@@ -1538,7 +1538,7 @@ dependencies = [
 [[package]]
 name = "epaint"
 version = "0.36.2"
-source = "git+https://github.com/waos-dev/egui?branch=waos#a55e06c14f96904b07cc3545af294496ef58fa31"
+source = "git+https://github.com/waos-dev/egui?branch=waos-0.8#427b6b210c45827153c0ae914167ee14806d5a09"
 dependencies = [
  "ahash",
  "bytemuck",
@@ -1562,7 +1562,7 @@ dependencies = [
 [[package]]
 name = "epaint_default_fonts"
 version = "0.36.2"
-source = "git+https://github.com/waos-dev/egui?branch=waos#a55e06c14f96904b07cc3545af294496ef58fa31"
+source = "git+https://github.com/waos-dev/egui?branch=waos-0.8#427b6b210c45827153c0ae914167ee14806d5a09"
 
 [[package]]
 name = "equivalent"
@@ -1856,7 +1856,7 @@ dependencies = [
 [[package]]
 name = "fontdb"
 version = "0.23.0"
-source = "git+https://github.com/waos-dev/fontdb?branch=waos#a3a053af987bee20380e1996ac5deab927d7230a"
+source = "git+https://github.com/waos-dev/fontdb?branch=waos-0.8#e9bff81b73d4cf3e619b0fba3cb2bd899d0d8171"
 dependencies = [
  "fontconfig-parser",
  "log",
@@ -4657,7 +4657,7 @@ checksum = "19b30a45b0cd0bcca8037f3d0dc3421eaf95327a17cad11964fb8179b4fc4832"
 [[package]]
 name = "reqwest"
 version = "0.13.5"
-source = "git+https://github.com/waos-dev/reqwest?branch=waos#1b4fb33bd801a578c22ae14a68c12f67859fdc3e"
+source = "git+https://github.com/waos-dev/reqwest?branch=waos-0.8#c577e82358d57aa1f1f893447a44761a4f00225a"
 dependencies = [
  "base64 0.23.1",
  "bytes",
@@ -4701,7 +4701,7 @@ dependencies = [
 [[package]]
 name = "rfd"
 version = "0.17.2"
-source = "git+https://github.com/waos-dev/rfd?branch=waos#2b59bc5a84cbb20c4734fe4333102b8f33d1afb7"
+source = "git+https://github.com/waos-dev/rfd?branch=waos-0.8#b0b5bb34605ffc9048fa61113930dcb5ccb07d86"
 dependencies = [
  "block2 0.6.2",
  "dispatch2",
@@ -5981,7 +5981,7 @@ dependencies = [
 [[package]]
 name = "sys-locale"
 version = "0.3.2"
-source = "git+https://github.com/waos-dev/sys-locale?branch=waos#12bcccc374db55c966a99d63f9674d3acfc59414"
+source = "git+https://github.com/waos-dev/sys-locale?branch=waos-0.8#386b5828ecad327ca5897373ebf21538efdc3aa3"
 dependencies = [
  "libc",
  "wasdk",
@@ -6804,8 +6804,9 @@ dependencies = [
 
 [[package]]
 name = "wasdk"
-version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?branch=main#8cef8341c7965c52352894cd673690de2e9e42ab"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b90221b5cf84279c735bb50677f3ec205de01d7468286ba4b6800fd95ecc9831"
 dependencies = [
  "inventory",
  "raw-window-handle",
@@ -6815,8 +6816,9 @@ dependencies = [
 
 [[package]]
 name = "wasdk-macros"
-version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?branch=main#8cef8341c7965c52352894cd673690de2e9e42ab"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ab97d3b1d17c1701145692dfc61681a51ebd1c2b1a1ff9169b723772cee32fb7"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -6825,8 +6827,9 @@ dependencies = [
 
 [[package]]
 name = "wasdk-wgpu"
-version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?branch=main#8cef8341c7965c52352894cd673690de2e9e42ab"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "927aaad602528c8b2df3f42db228e53711d4109928fe191a62429a4a774fbd8c"
 dependencies = [
  "futures",
  "js-sys",
@@ -7083,7 +7086,7 @@ dependencies = [
 [[package]]
 name = "webbrowser"
 version = "1.2.7"
-source = "git+https://github.com/waos-dev/webbrowser-rs?branch=waos#a699d5523b2943185e8234cc639c181dd37d455d"
+source = "git+https://github.com/waos-dev/webbrowser-rs?branch=waos-0.8#e6406b3c0d1ac40d554fefa380c47dce6a7690bf"
 dependencies = [
  "jni 0.22.4",
  "log",
@@ -7657,7 +7660,7 @@ checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
 [[package]]
 name = "winit"
 version = "0.30.13"
-source = "git+https://github.com/waos-dev/winit?branch=waos#16a8e7ff653e870ae10db00a6c890d3e10865cd0"
+source = "git+https://github.com/waos-dev/winit?branch=waos-0.8#c8b87cd0ef867dd63d54caa229efb07d97a74485"
 dependencies = [
  "ahash",
  "android-activity",

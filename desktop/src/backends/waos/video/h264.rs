@@ -25,7 +25,7 @@ use ruffle_render::bitmap::{Bitmap, BitmapHandle, BitmapInfo, PixelRegion};
 use ruffle_video::error::Error;
 use ruffle_video::frame::{EncodedFrame, FrameDependency};
 use wasdk::video_decoders::{
-    self, DecoderError, DecodingPurpose, VideoDecoder, VideoDecoderOptions, VideoDecoders,
+    DecoderError, DecodingPurpose, VideoDecoder, VideoDecoderOptions, VideoDecoders,
 };
 use wasdk::video_frames::VideoFrame;
 use wasdk::video_streams::{CodecChoice, EncodedChunk, NalFormat, VideoStreamSetup};
@@ -60,11 +60,11 @@ pub(super) struct H264Stream {
 }
 
 impl H264Stream {
-    /// A stream whose decoder is opened once its setup comes.
-    pub(super) fn start() -> Self {
+    /// A stream whose decoder, one for `device`'s GPU, is opened once its setup comes.
+    pub(super) fn start(device: &wgpu::Device) -> Self {
         let (asked, work) = async_channel::unbounded();
         let newest = Newest::default();
-        crate::task::spawn(hand_over(work, Rc::clone(&newest)));
+        crate::task::spawn(hand_over(work, Rc::clone(&newest), device.clone()));
         H264Stream {
             length_size: None,
             asked,
@@ -173,10 +173,10 @@ fn draw(
     })
 }
 
-/// Hands the decoder each chunk that comes through `work`, as it has room, opening it with the
+/// Hands `device`'s decoder each chunk that comes through `work`, as it has room, opening it with the
 /// stream's setup; ends once the stream is dropped, or the decoder cannot go on.
-async fn hand_over(work: Receiver<Work>, newest: Newest) {
-    let Some(decoders) = video_decoders::get_video_decoders() else {
+async fn hand_over(work: Receiver<Work>, newest: Newest, device: wgpu::Device) {
+    let Some(decoders) = wasdk_wgpu::video_decoders(&device) else {
         tracing::warn!("H.264 video is not shown: WaOS has no video decoder on this system");
         return;
     };

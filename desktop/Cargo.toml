@@ -86,8 +86,8 @@ egui-wgpu = { workspace = true, default-features = false, features = ["winit"] }
 ruffle_frontend_utils = { path = "../frontend-utils", default-features = false, features = ["fs", "navigator"] }
 # Its channels and locks alone: tasks run on WaOS's own executor.
 tokio = { workspace = true, features = ["sync", "macros"] }
-wasdk = "0.7.1"
-wasdk-wgpu = "0.7.1"
+wasdk = "0.8.0"
+wasdk-wgpu = "0.8.0"
 # The player's video on WaOS: H.264 through WaOS's decoders, the rest in software.
 ruffle_video = { path = "../video" }
 ruffle_video_software = { path = "../video/software" }

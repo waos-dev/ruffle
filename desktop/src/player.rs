@@ -245,7 +245,9 @@ impl ActivePlayer {
         // software; OpenH264, which a desktop downloads, is not asked for.
         #[cfg(target_os = "wasi")]
         {
-            builder = builder.with_video(crate::backends::WaosVideoBackend::new());
+            builder = builder.with_video(crate::backends::WaosVideoBackend::new(
+                descriptors.device.clone(),
+            ));
         }
         #[cfg(not(target_os = "wasi"))]
         if cfg!(feature = "external_video") && preferences.openh264_enabled() {

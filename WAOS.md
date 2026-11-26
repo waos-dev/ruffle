@@ -7,7 +7,7 @@ It runs because the libraries it is written against have WaOS backends, on forks
 What is on top of upstream Ruffle:
 
 - `rust-toolchain.toml`: WaOS's nightly, with `wasm32-wasip3`. Upstream names no toolchain, so on this branch its crates build with this one too.
-- `Cargo.toml`: the forks through `[patch.crates-io]`, with `wasdk` from WaOS's `main` until its next release.
+- `Cargo.toml`: the forks through `[patch.crates-io]`. `wasdk` is the published 0.8.0.
 - `.github/workflows/waos.yml`: a check that the desktop program builds for WaOS, formatted and without warnings, on each push to `waos`, and that the shared front-end crate does too. Upstream's workflows run on `master` alone.
 
 What the desktop program chooses by target, each at one place:
@@ -54,7 +54,7 @@ Needed:
 
 - Rust through rustup: `rustup toolchain install` in the checkout installs `rust-toolchain.toml`'s.
 - Java, which Ruffle's build compiles its ActionScript library with. OpenJDK 25 works.
-- `waos`, and a WaOS to run it in, built from WaOS's `main`, which `wasdk` comes from: no release of WaOS carries it yet.
+- `waos`, and a WaOS to run it in, both 0.8.0 or later.
 
 Then, in `desktop/`:
 

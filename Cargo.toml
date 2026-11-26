@@ -212,24 +212,21 @@ codegen-units = 64
 # second build.
 panic = "unwind"
 
-# WaOS: the libraries the desktop program is written against, each with WaOS's backend, and
-# wasdk from WaOS's main branch until its next release, which they build against.
+# WaOS: the libraries the desktop program is written against, each with WaOS's backend.
 [patch.crates-io]
-winit = { git = "https://github.com/waos-dev/winit", branch = "waos" }
-egui = { git = "https://github.com/waos-dev/egui", branch = "waos" }
-emath = { git = "https://github.com/waos-dev/egui", branch = "waos" }
-ecolor = { git = "https://github.com/waos-dev/egui", branch = "waos" }
-epaint = { git = "https://github.com/waos-dev/egui", branch = "waos" }
-epaint_default_fonts = { git = "https://github.com/waos-dev/egui", branch = "waos" }
-egui-winit = { git = "https://github.com/waos-dev/egui", branch = "waos" }
-egui-wgpu = { git = "https://github.com/waos-dev/egui", branch = "waos" }
-egui_extras = { git = "https://github.com/waos-dev/egui", branch = "waos" }
-arboard = { git = "https://github.com/waos-dev/arboard", branch = "waos" }
-rfd = { git = "https://github.com/waos-dev/rfd", branch = "waos" }
-webbrowser = { git = "https://github.com/waos-dev/webbrowser-rs", branch = "waos" }
+winit = { git = "https://github.com/waos-dev/winit", branch = "waos-0.8" }
+egui = { git = "https://github.com/waos-dev/egui", branch = "waos-0.8" }
+emath = { git = "https://github.com/waos-dev/egui", branch = "waos-0.8" }
+ecolor = { git = "https://github.com/waos-dev/egui", branch = "waos-0.8" }
+epaint = { git = "https://github.com/waos-dev/egui", branch = "waos-0.8" }
+epaint_default_fonts = { git = "https://github.com/waos-dev/egui", branch = "waos-0.8" }
+egui-winit = { git = "https://github.com/waos-dev/egui", branch = "waos-0.8" }
+egui-wgpu = { git = "https://github.com/waos-dev/egui", branch = "waos-0.8" }
+egui_extras = { git = "https://github.com/waos-dev/egui", branch = "waos-0.8" }
+arboard = { git = "https://github.com/waos-dev/arboard", branch = "waos-0.8" }
+rfd = { git = "https://github.com/waos-dev/rfd", branch = "waos-0.8" }
+webbrowser = { git = "https://github.com/waos-dev/webbrowser-rs", branch = "waos-0.8" }
 dirs = { git = "https://github.com/waos-dev/dirs-rs", branch = "waos" }
-sys-locale = { git = "https://github.com/waos-dev/sys-locale", branch = "waos" }
-fontdb = { git = "https://github.com/waos-dev/fontdb", branch = "waos" }
-reqwest = { git = "https://github.com/waos-dev/reqwest", branch = "waos" }
-wasdk = { git = "https://github.com/waos-dev/waos", branch = "main" }
-wasdk-wgpu = { git = "https://github.com/waos-dev/waos", branch = "main" }
+sys-locale = { git = "https://github.com/waos-dev/sys-locale", branch = "waos-0.8" }
+fontdb = { git = "https://github.com/waos-dev/fontdb", branch = "waos-0.8" }
+reqwest = { git = "https://github.com/waos-dev/reqwest", branch = "waos-0.8" }
