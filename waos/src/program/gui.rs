@@ -12,9 +12,8 @@ use std::sync::Arc;
 
 use ruffle_core::Player;
 use ruffle_render_wgpu::descriptors::Descriptors;
-use wasdk::views::ViewEvent;
+use wasdk::views::{View, ViewEvent};
 use wasdk_adapter_egui::State;
-use wasdk_wgpu::SharedView;
 
 pub struct Gui {
     egui_ctx: egui::Context,
@@ -31,7 +30,7 @@ pub struct Gui {
 impl Gui {
     /// The controls on `view`, drawn on Ruffle's device into frames of `format`.
     pub fn new(
-        view: &SharedView,
+        view: &Arc<View>,
         descriptors: Arc<Descriptors>,
         format: wgpu::TextureFormat,
     ) -> Gui {

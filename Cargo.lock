@@ -6830,29 +6830,29 @@ dependencies = [
 
 [[package]]
 name = "wasdk"
-version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?rev=d9983bb10bfcb9a3ebd8006e96deb513cf24933b#d9983bb10bfcb9a3ebd8006e96deb513cf24933b"
+version = "0.8.1"
+source = "git+https://github.com/waos-dev/waos?tag=v0.8.1#7f4ddb9d2857f0a112a9e3f617c10be7facfaeb2"
 dependencies = [
  "inventory",
+ "raw-window-handle",
  "wasdk-macros",
  "wit-bindgen 0.63.0",
 ]
 
 [[package]]
 name = "wasdk-adapter-egui"
-version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?rev=d9983bb10bfcb9a3ebd8006e96deb513cf24933b#d9983bb10bfcb9a3ebd8006e96deb513cf24933b"
+version = "0.8.1"
+source = "git+https://github.com/waos-dev/waos?tag=v0.8.1#7f4ddb9d2857f0a112a9e3f617c10be7facfaeb2"
 dependencies = [
  "egui",
  "tracing",
  "wasdk",
- "wasdk-wgpu",
 ]
 
 [[package]]
 name = "wasdk-macros"
-version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?rev=d9983bb10bfcb9a3ebd8006e96deb513cf24933b#d9983bb10bfcb9a3ebd8006e96deb513cf24933b"
+version = "0.8.1"
+source = "git+https://github.com/waos-dev/waos?tag=v0.8.1#7f4ddb9d2857f0a112a9e3f617c10be7facfaeb2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -6861,10 +6861,9 @@ dependencies = [
 
 [[package]]
 name = "wasdk-wgpu"
-version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?rev=d9983bb10bfcb9a3ebd8006e96deb513cf24933b#d9983bb10bfcb9a3ebd8006e96deb513cf24933b"
+version = "0.8.1"
+source = "git+https://github.com/waos-dev/waos?tag=v0.8.1#7f4ddb9d2857f0a112a9e3f617c10be7facfaeb2"
 dependencies = [
- "futures",
  "js-sys",
  "wasdk",
  "wgpu",
