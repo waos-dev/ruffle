@@ -53,7 +53,7 @@ impl ThemeController {
     fn start_theme_preference_watcher(&self, preferences: &GlobalPreferences) {
         let mut theme_preference_watcher = preferences.theme_preference_watcher();
         let this = self.clone();
-        tokio::spawn(Box::pin(async move {
+        crate::task::spawn(Box::pin(async move {
             loop {
                 match theme_preference_watcher.recv().await {
                     Ok(new_theme_preference) => {
@@ -76,7 +76,7 @@ impl ThemeController {
             };
 
             let this2 = this.clone();
-            tokio::spawn(async move {
+            crate::task::spawn(async move {
                 let mut stream = match settings.watch_color_scheme().await {
                     Ok(stream) => stream,
                     Err(err) => {
@@ -156,6 +156,10 @@ impl ThemeController {
     }
 
     #[cfg(not(target_os = "linux"))]
+    #[expect(
+        clippy::unused_async,
+        reason = "async as the Linux twin is, which awaits D-Bus, and which its callers await"
+    )]
     pub async fn get_system_theme(&self) -> Result<Theme, Box<dyn Error>> {
         #[derive(thiserror::Error, Debug)]
         #[error("Unsupported operation")]

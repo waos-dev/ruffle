@@ -15,7 +15,6 @@ use ruffle_core::config::Letterbox;
 use ruffle_core::events::{GamepadButton, KeyCode};
 use ruffle_core::font::DefaultFont;
 use ruffle_core::{LoadBehavior, Player, PlayerBuilder, PlayerEvent};
-use ruffle_frontend_utils::backends::audio::CpalAudioBackend;
 use ruffle_frontend_utils::backends::navigator::{ExternalNavigatorBackend, FutureSpawner};
 use ruffle_frontend_utils::bundle::source::BundleSourceError;
 use ruffle_frontend_utils::bundle::{Bundle, BundleError};
@@ -142,7 +141,7 @@ impl ActivePlayer {
         let player_id = PlayerId::new();
         let mut builder = PlayerBuilder::new();
 
-        match CpalAudioBackend::new(preferences.output_device_name().as_deref()) {
+        match crate::backends::audio(preferences.output_device_name().as_deref()) {
             Ok(audio) => {
                 builder = builder.with_audio(audio);
             }
@@ -242,6 +241,15 @@ impl ActivePlayer {
             ),
         );
 
+        // WaOS port: H.264 through WaOS's decoders, which are the system's, and the rest in
+        // software; OpenH264, which a desktop downloads, is not asked for.
+        #[cfg(target_os = "wasi")]
+        {
+            builder = builder.with_video(crate::backends::WaosVideoBackend::new(
+                descriptors.device.clone(),
+            ));
+        }
+        #[cfg(not(target_os = "wasi"))]
         if cfg!(feature = "external_video") && preferences.openh264_enabled() {
             #[cfg(feature = "external_video")]
             {
@@ -300,7 +308,7 @@ impl ActivePlayer {
         let (notification_sender, notification_recv) = async_channel::unbounded();
 
         let event_loop2 = event_loop.clone();
-        tokio::spawn(async move {
+        crate::task::spawn(async move {
             while let Ok(notification) = notification_recv.recv().await {
                 let event = RuffleEvent::PlayerNotification(notification);
                 match event_loop2.send_event(event) {

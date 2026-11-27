@@ -1,4 +1,6 @@
+#[cfg(not(target_os = "wasi"))]
 use chrono::Utc;
+#[cfg(not(target_os = "wasi"))]
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
@@ -22,6 +24,7 @@ impl FromStr for FilenamePattern {
 }
 
 impl FilenamePattern {
+    #[cfg(not(target_os = "wasi"))]
     pub fn create_path(self, directory: &Path) -> PathBuf {
         match self {
             FilenamePattern::SingleFile => directory.join("ruffle.log"),

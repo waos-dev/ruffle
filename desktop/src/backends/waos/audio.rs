@@ -50,7 +50,7 @@ impl WaosAudioBackend {
         let sample_rate = context.base().sample_rate();
         let mixer = AudioMixer::new(CHANNELS, sample_rate as u32);
         let (asked_playback, asked) = async_channel::unbounded();
-        wasdk::spawn(Output::on(context, mixer.proxy(), asked).run());
+        crate::task::spawn(Output::on(context, mixer.proxy(), asked).run());
         Ok(WaosAudioBackend {
             mixer,
             sample_rate,

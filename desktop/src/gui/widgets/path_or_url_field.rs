@@ -109,7 +109,7 @@ impl PathOrUrlField {
                 let dir = dir.clone();
                 let value = self.value.clone();
                 let picker = self.picker.clone();
-                tokio::spawn(async move {
+                crate::task::spawn(async move {
                     if let Some((directory, content)) =
                         picker.pick_ruffle_directory_and_content(dir).await
                     {
@@ -125,7 +125,7 @@ impl PathOrUrlField {
             {
                 let value = self.value.clone();
                 let picker = self.picker.clone();
-                tokio::spawn(async move {
+                crate::task::spawn(async move {
                     if let Some(path) = picker.pick_ruffle_file(dir).await {
                         *Self::lock_value(&value) = PathOrUrlFieldValue::from_path(path);
                     }

@@ -205,8 +205,7 @@ dependencies = [
 [[package]]
 name = "arboard"
 version = "3.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aeb9553e62312c8756a5979254fc6d7da8bbeb5986a1e17037fab932f7037917"
+source = "git+https://github.com/waos-dev/arboard?branch=waos#f81445b46ec11244723fe173287d1e88be3099df"
 dependencies = [
  "clipboard-win",
  "image",
@@ -218,6 +217,7 @@ dependencies = [
  "objc2-foundation 0.3.2",
  "parking_lot",
  "percent-encoding",
+ "wasdk",
  "windows-sys 0.61.2",
  "x11rb",
 ]
@@ -1274,8 +1274,7 @@ dependencies = [
 [[package]]
 name = "dirs"
 version = "6.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c3e8aa94d75141228480295a7d0e7feb620b1a5ad9f12bc40be62411e38cce4e"
+source = "git+https://github.com/waos-dev/dirs-rs?branch=waos#ba8498808d116586fc6b692883857df066f1d9a7"
 dependencies = [
  "dirs-sys",
 ]
@@ -1347,15 +1346,13 @@ checksum = "75b325c5dbd37f80359721ad39aca5a29fb04c89279657cffdda8736d0c0b9d2"
 
 [[package]]
 name = "dpi"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d8b14ccef22fc6f5a8f4d7d768562a182c04ce9a3b3157b91390b52ddfdf1a76"
+version = "0.1.1"
+source = "git+https://github.com/waos-dev/winit?branch=waos#41ee4c99be9e5ca5b334b2eeef868ddb10b1057a"
 
 [[package]]
 name = "ecolor"
 version = "0.36.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0656a7530b9e2841ee7a5f983965bdd9840c32f4012f759cfd44b912cced6b34"
+source = "git+https://github.com/waos-dev/egui?branch=waos#4ec58ac3905bae29536be2bed50c2ea6f929f47c"
 dependencies = [
  "bytemuck",
  "emath",
@@ -1364,8 +1361,7 @@ dependencies = [
 [[package]]
 name = "egui"
 version = "0.36.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dc938cc27cd911415e1e4d151bc56ff9df063d8db081374e87aeb805ea74b2ba"
+source = "git+https://github.com/waos-dev/egui?branch=waos#4ec58ac3905bae29536be2bed50c2ea6f929f47c"
 dependencies = [
  "accesskit",
  "ahash",
@@ -1384,8 +1380,7 @@ dependencies = [
 [[package]]
 name = "egui-wgpu"
 version = "0.36.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5cef1f6d1bba40b09a4d0d62cb822b81030922cfbf65c5373398c3a3caafc5bd"
+source = "git+https://github.com/waos-dev/egui?branch=waos#4ec58ac3905bae29536be2bed50c2ea6f929f47c"
 dependencies = [
  "ahash",
  "bytemuck",
@@ -1404,8 +1399,7 @@ dependencies = [
 [[package]]
 name = "egui-winit"
 version = "0.36.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "98466000559d66ba4db786a30448b01483946add4188e7f10f522a27b4fb89cc"
+source = "git+https://github.com/waos-dev/egui?branch=waos#4ec58ac3905bae29536be2bed50c2ea6f929f47c"
 dependencies = [
  "arboard",
  "bytemuck",
@@ -1417,6 +1411,7 @@ dependencies = [
  "profiling",
  "raw-window-handle",
  "smithay-clipboard",
+ "wasdk",
  "web-time",
  "webbrowser",
  "winit",
@@ -1425,8 +1420,7 @@ dependencies = [
 [[package]]
 name = "egui_extras"
 version = "0.36.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "05cbdc785020861553f230f23d330ba1fb72613b9d8e0e457f3bdc8ba6db6dcf"
+source = "git+https://github.com/waos-dev/egui?branch=waos#4ec58ac3905bae29536be2bed50c2ea6f929f47c"
 dependencies = [
  "ahash",
  "egui",
@@ -1446,8 +1440,7 @@ checksum = "0e9c71c2167ca323c882b99918929403426e2373ea17242ff5653e0d5e1058be"
 [[package]]
 name = "emath"
 version = "0.36.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "52c8d4141cf0f60fb2f7aefaf352d3ffa5171ef0ab09731c64391801e95e48f1"
+source = "git+https://github.com/waos-dev/egui?branch=waos#4ec58ac3905bae29536be2bed50c2ea6f929f47c"
 dependencies = [
  "bytemuck",
 ]
@@ -1545,8 +1538,7 @@ dependencies = [
 [[package]]
 name = "epaint"
 version = "0.36.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a0ec0308dc23130fc1a7d4623a8534c2ed069c6dc84e258ee4f3de99615aa1a3"
+source = "git+https://github.com/waos-dev/egui?branch=waos#4ec58ac3905bae29536be2bed50c2ea6f929f47c"
 dependencies = [
  "ahash",
  "bytemuck",
@@ -1570,8 +1562,7 @@ dependencies = [
 [[package]]
 name = "epaint_default_fonts"
 version = "0.36.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "773fa9c96dd0dbef887e39d0ed6177f141cce4d68e6041df77570aa3702dfa13"
+source = "git+https://github.com/waos-dev/egui?branch=waos#4ec58ac3905bae29536be2bed50c2ea6f929f47c"
 
 [[package]]
 name = "equivalent"
@@ -1865,8 +1856,7 @@ dependencies = [
 [[package]]
 name = "fontdb"
 version = "0.23.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "457e789b3d1202543297a350643cf459f836cade38934e7a4cf6a39e7cde2905"
+source = "git+https://github.com/waos-dev/fontdb?branch=waos#6c91c3d4efe0d0fbc92c663ea441aa13a6d443bd"
 dependencies = [
  "fontconfig-parser",
  "log",
@@ -1874,6 +1864,7 @@ dependencies = [
  "slotmap",
  "tinyvec",
  "ttf-parser",
+ "wasdk",
 ]
 
 [[package]]
@@ -4666,8 +4657,7 @@ checksum = "19b30a45b0cd0bcca8037f3d0dc3421eaf95327a17cad11964fb8179b4fc4832"
 [[package]]
 name = "reqwest"
 version = "0.13.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "16a1cfa75cc186dd73d5818e510e042e40927bccc9c236b061cea97e1eb08029"
+source = "git+https://github.com/waos-dev/reqwest?branch=waos#b54e7ed4e54e4a15075ebb7225d2ca8bac996196"
 dependencies = [
  "base64 0.23.1",
  "bytes",
@@ -4702,6 +4692,7 @@ dependencies = [
  "tower-http",
  "tower-service",
  "url",
+ "wasdk",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
@@ -4710,8 +4701,7 @@ dependencies = [
 [[package]]
 name = "rfd"
 version = "0.17.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "20dafead71c16a34e1ff357ddefc8afc11e7d51d6d2b9fbd07eaa48e3e540220"
+source = "git+https://github.com/waos-dev/rfd?branch=waos#141b8487235295f25728713393ca2bc05049fce7"
 dependencies = [
  "block2 0.6.2",
  "dispatch2",
@@ -4725,6 +4715,7 @@ dependencies = [
  "percent-encoding",
  "pollster",
  "raw-window-handle",
+ "wasdk",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "wayland-backend",
@@ -4907,8 +4898,10 @@ dependencies = [
  "ruffle_frontend_utils",
  "ruffle_render",
  "ruffle_render_wgpu",
+ "ruffle_video",
  "ruffle_video_external",
  "ruffle_video_software",
+ "slotmap",
  "sys-locale",
  "thiserror 2.0.21",
  "tokio",
@@ -4923,6 +4916,8 @@ dependencies = [
  "vergen",
  "vergen-gitcl",
  "walkdir",
+ "wasdk",
+ "wasdk-wgpu",
  "webbrowser",
  "wgpu",
  "windows-sys 0.61.2",
@@ -4952,6 +4947,7 @@ dependencies = [
  "tracing",
  "url",
  "urlencoding",
+ "wasdk",
  "zip",
 ]
 
@@ -5191,28 +5187,6 @@ dependencies = [
  "slotmap",
  "swf 0.4.0",
  "thiserror 2.0.21",
-]
-
-[[package]]
-name = "ruffle_waos"
-version = "0.8.0"
-dependencies = [
- "async-channel",
- "egui",
- "egui-wgpu",
- "ruffle_core",
- "ruffle_render",
- "ruffle_render_wgpu",
- "ruffle_video",
- "ruffle_video_software",
- "slotmap",
- "tracing",
- "tracing-subscriber",
- "url",
- "wasdk",
- "wasdk-adapter-egui",
- "wasdk-wgpu",
- "wgpu",
 ]
 
 [[package]]
@@ -6007,10 +5981,10 @@ dependencies = [
 [[package]]
 name = "sys-locale"
 version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8eab9a99a024a169fe8a903cf9d4a3b3601109bcc13bd9e3c6fff259138626c4"
+source = "git+https://github.com/waos-dev/sys-locale?branch=waos#2108454f3c22c8d42f5f6ee2911b8d7eb30df421"
 dependencies = [
  "libc",
+ "wasdk",
 ]
 
 [[package]]
@@ -6830,29 +6804,21 @@ dependencies = [
 
 [[package]]
 name = "wasdk"
-version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?rev=d9983bb10bfcb9a3ebd8006e96deb513cf24933b#d9983bb10bfcb9a3ebd8006e96deb513cf24933b"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "34d8afdabc2bba08e7ad80f76955a84d5befcb38276dfa592157dfc22e3f1b75"
 dependencies = [
  "inventory",
+ "raw-window-handle",
  "wasdk-macros",
  "wit-bindgen 0.63.0",
 ]
 
 [[package]]
-name = "wasdk-adapter-egui"
-version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?rev=d9983bb10bfcb9a3ebd8006e96deb513cf24933b#d9983bb10bfcb9a3ebd8006e96deb513cf24933b"
-dependencies = [
- "egui",
- "tracing",
- "wasdk",
- "wasdk-wgpu",
-]
-
-[[package]]
 name = "wasdk-macros"
-version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?rev=d9983bb10bfcb9a3ebd8006e96deb513cf24933b#d9983bb10bfcb9a3ebd8006e96deb513cf24933b"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a9c891044aaedaef246094aff87d9b4483d6630ad49ed30b5eb55f88b0ea1c89"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -6861,10 +6827,10 @@ dependencies = [
 
 [[package]]
 name = "wasdk-wgpu"
-version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?rev=d9983bb10bfcb9a3ebd8006e96deb513cf24933b#d9983bb10bfcb9a3ebd8006e96deb513cf24933b"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "321bd8cb85261bf10f7cde3016cd48105085ce6c5cfdd088e452e93b7736bec7"
 dependencies = [
- "futures",
  "js-sys",
  "wasdk",
  "wgpu",
@@ -7119,8 +7085,7 @@ dependencies = [
 [[package]]
 name = "webbrowser"
 version = "1.2.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "73e91ccd4698f2647d6137e8eb17a3f1dcfd63810be9029fb2398f507279b95b"
+source = "git+https://github.com/waos-dev/webbrowser-rs?branch=waos#c53656d138388c2aba78f19f8939a530a8fddd1c"
 dependencies = [
  "jni 0.22.4",
  "log",
@@ -7129,6 +7094,7 @@ dependencies = [
  "objc2-app-kit 0.3.2",
  "objc2-foundation 0.3.2",
  "url",
+ "wasdk",
  "web-sys",
 ]
 
@@ -7693,8 +7659,7 @@ checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
 [[package]]
 name = "winit"
 version = "0.30.13"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a6755fa58a9f8350bd1e472d4c3fcc25f824ec358933bba33306d0b63df5978d"
+source = "git+https://github.com/waos-dev/winit?branch=waos#41ee4c99be9e5ca5b334b2eeef868ddb10b1057a"
 dependencies = [
  "ahash",
  "android-activity",
@@ -7709,6 +7674,7 @@ dependencies = [
  "core-graphics",
  "cursor-icon",
  "dpi",
+ "futures",
  "js-sys",
  "libc",
  "memmap2",
@@ -7728,6 +7694,7 @@ dependencies = [
  "smol_str",
  "tracing",
  "unicode-segmentation",
+ "wasdk",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "wayland-backend",

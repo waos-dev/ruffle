@@ -13,10 +13,11 @@ use fontdb::{Database, Family, Query, Source};
 use ruffle_core::events::{ImeCursorArea, ImePurpose};
 use ruffle_core::{Player, PlayerEvent};
 use ruffle_frontend_utils::content::ContentDescriptor;
-use ruffle_render_wgpu::backend::{
-    WgpuRenderBackend, create_wgpu_instance, request_adapter_and_device,
-};
+#[cfg(not(target_os = "wasi"))]
+use ruffle_render_wgpu::backend::create_wgpu_instance;
+use ruffle_render_wgpu::backend::{WgpuRenderBackend, request_adapter_and_device};
 use ruffle_render_wgpu::descriptors::Descriptors;
+#[cfg(not(target_os = "wasi"))]
 use ruffle_render_wgpu::utils::{format_list, get_backend_names};
 use std::any::Any;
 use std::fs::File;
@@ -63,7 +64,7 @@ impl GuiController {
         let (instance, backend) =
             select_wgpu_backend(preferences.graphics_backends().into(), &window)?;
         let surface = instance.create_surface(window.clone())?;
-        let (adapter, device, queue) = futures::executor::block_on(request_adapter_and_device(
+        let (adapter, device, queue) = crate::task::block_on(request_adapter_and_device(
             backend,
             &instance,
             Some(&surface),
@@ -116,7 +117,7 @@ impl GuiController {
         // scale factor, so egui's own UI zoom would break the layout.
         egui_ctx.options_mut(|o| o.zoom_with_keyboard = false);
 
-        let theme_controller = futures::executor::block_on(ThemeController::new(
+        let theme_controller = crate::task::block_on(ThemeController::new(
             window.clone(),
             preferences.clone(),
             egui_ctx.clone(),
@@ -131,6 +132,13 @@ impl GuiController {
         );
         egui_winit.set_max_texture_side(descriptors.limits.max_texture_dimension_2d as usize);
 
+        #[cfg_attr(
+            target_os = "wasi",
+            expect(
+                clippy::arc_with_non_send_sync,
+                reason = "WaOS port: the renderer shares these through `Arc` on every target; on WaOS's one thread, where wgpu's types are neither `Send` nor `Sync`, nothing crosses threads"
+            )
+        )]
         let movie_view_renderer = Arc::new(MovieViewRenderer::new(
             &descriptors.device,
             surface_format,
@@ -148,6 +156,13 @@ impl GuiController {
                 predictable_texture_filtering: false,
             },
         );
+        #[cfg_attr(
+            target_os = "wasi",
+            expect(
+                clippy::arc_with_non_send_sync,
+                reason = "WaOS port: the renderer shares these through `Arc` on every target; on WaOS's one thread, where wgpu's types are neither `Send` nor `Sync`, nothing crosses threads"
+            )
+        )]
         let descriptors = Arc::new(descriptors);
         let gui = RuffleGui::new(
             Arc::downgrade(&window),
@@ -569,6 +584,17 @@ impl GuiController {
     }
 }
 
+/// WaOS port: WaOS's one GPU backend, WebGPU as WaOS serves it, whatever the preferences name:
+/// an app has no graphics library of a system's to choose among.
+#[cfg(target_os = "wasi")]
+fn select_wgpu_backend(
+    _preferred_backends: wgpu::Backends,
+    _window: &Arc<Window>,
+) -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
+    Ok((wasdk_wgpu::instance(), wgpu::Backends::BROWSER_WEBGPU))
+}
+
+#[cfg(not(target_os = "wasi"))]
 fn select_wgpu_backend(
     preferred_backends: wgpu::Backends,
     window: &Arc<Window>,
@@ -603,13 +629,14 @@ fn select_wgpu_backend(
     ))
 }
 
+#[cfg(not(target_os = "wasi"))]
 fn try_wgpu_backend(backend: wgpu::Backends, window: Arc<Window>) -> Option<wgpu::Instance> {
     let instance = create_wgpu_instance(
         backend,
         wgpu::BackendOptions::default(),
         Some(Box::new(window)),
     );
-    if futures::executor::block_on(instance.enumerate_adapters(backend)).is_empty() {
+    if crate::task::block_on(instance.enumerate_adapters(backend)).is_empty() {
         None
     } else {
         Some(instance)

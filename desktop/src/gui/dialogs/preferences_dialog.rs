@@ -3,8 +3,10 @@ use crate::cli::{GameModePreference, OpenUrlMode};
 use crate::gui::{ThemePreference, available_languages, optional_text, text};
 use crate::log::FilenamePattern;
 use crate::preferences::{GlobalPreferences, storage::StorageBackend};
-use cpal::traits::{DeviceTrait, HostTrait};
-use egui::{Align2, Button, Checkbox, ComboBox, DragValue, Grid, Ui, Widget, Window};
+#[cfg(feature = "external_video")]
+use egui::Checkbox;
+use egui::{Align2, Button, ComboBox, DragValue, Grid, Ui, Widget, Window};
+#[cfg(not(target_os = "wasi"))]
 use ruffle_render_wgpu::backend::create_wgpu_instance;
 use ruffle_render_wgpu::clap::{GraphicsBackend, PowerPreference};
 use std::borrow::Cow;
@@ -36,6 +38,7 @@ pub struct PreferencesDialog {
 
     enable_openh264: bool,
     enable_openh264_changed: bool,
+    #[cfg(feature = "external_video")]
     openh264_license_visible: bool,
 
     recent_limit: usize,
@@ -66,15 +69,7 @@ impl PreferencesDialog {
     pub fn new(preferences: GlobalPreferences, window: Option<Arc<winit::window::Window>>) -> Self {
         let available_backends = find_available_graphics_backends(window);
 
-        let audio_host = cpal::default_host();
-        let mut available_output_devices = Vec::new();
-        if let Ok(devices) = audio_host.output_devices() {
-            for device in devices {
-                if let Ok(name) = device.name() {
-                    available_output_devices.push(name);
-                }
-            }
-        }
+        let available_output_devices = crate::backends::output_device_names();
 
         Self {
             available_backends,
@@ -99,6 +94,7 @@ impl PreferencesDialog {
 
             enable_openh264: preferences.openh264_enabled(),
             enable_openh264_changed: false,
+            #[cfg(feature = "external_video")]
             openh264_license_visible: false,
 
             recent_limit: preferences.recent_limit(),
@@ -164,6 +160,7 @@ impl PreferencesDialog {
 
                             self.show_audio_preferences(locale, ui);
 
+                            #[cfg(feature = "external_video")]
                             self.show_video_preferences(egui_ctx, locale, ui);
 
                             self.show_log_preferences(locale, ui);
@@ -482,6 +479,7 @@ impl PreferencesDialog {
         ui.end_row();
     }
 
+    #[cfg(feature = "external_video")]
     fn show_video_preferences(
         &mut self,
         egui_ctx: &egui::Context,
@@ -752,14 +750,24 @@ fn device_font_renderer_name(
     }
 }
 
+#[cfg(not(target_os = "wasi"))]
 fn backend_availability(instance: &wgpu::Instance, backend: wgpu::Backends) -> wgpu::Backends {
-    if futures::executor::block_on(instance.enumerate_adapters(backend)).is_empty() {
+    if crate::task::block_on(instance.enumerate_adapters(backend)).is_empty() {
         wgpu::Backends::empty()
     } else {
         backend
     }
 }
 
+/// WaOS port: none of a desktop's graphics libraries to choose among. An app draws through
+/// WaOS's one backend, and wgpu's own instance, made here to ask each library, takes any wasm32
+/// target for a browser.
+#[cfg(target_os = "wasi")]
+fn find_available_graphics_backends(_window: Option<Arc<winit::window::Window>>) -> wgpu::Backends {
+    wgpu::Backends::empty()
+}
+
+#[cfg(not(target_os = "wasi"))]
 fn find_available_graphics_backends(window: Option<Arc<winit::window::Window>>) -> wgpu::Backends {
     let mut available_backends = wgpu::Backends::empty();
 

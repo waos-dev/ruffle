@@ -10,13 +10,29 @@ version.workspace = true
 [lints]
 workspace = true
 
+# WaOS port: what `waos run` and `waos package` call the program.
+[package.metadata.waos]
+id = "dev.waos.ruffle"
+name = "Ruffle"
+
+# WaOS port: the movies the system offers Ruffle for, the extensions Ruffle's own Windows package
+# declares (`desktop/packages/windows`), each by the MIME type freedesktop.org's shared MIME
+# database gives it.
+[[package.metadata.waos.file_associations]]
+extensions = ["swf"]
+name = "Flash Movie"
+mime_type = "application/x-shockwave-flash"
+
+[[package.metadata.waos.file_associations]]
+extensions = ["spl"]
+name = "FutureSplash Movie"
+mime_type = "application/futuresplash"
+
 [dependencies]
 clap = { workspace = true }
 clap_complete = { workspace = true, optional = true }
-cpal = { workspace = true }
 egui = { workspace = true }
 egui_extras = { workspace = true, default-features = false, features = ["image"] }
-egui-wgpu = { workspace = true, features = ["winit"] }
 image = { workspace = true, features = ["png"] }
 egui-winit = { workspace = true }
 fontdb = "0.23"
@@ -26,10 +42,8 @@ ruffle_render = { path = "../render", features = ["clap"] }
 ruffle_render_wgpu = { path = "../render/wgpu", features = ["clap"] }
 ruffle_video_software = { path = "../video/software", optional = true }
 ruffle_video_external = { path = "../video/external", features = ["openh264"], optional = true }
-ruffle_frontend_utils = { path = "../frontend-utils", features = ["cpal", "fs", "navigator"] }
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
-tracing-appender = "0.2.5"
 winit = "0.30.13"
 webbrowser = "1.2.4"
 url = { workspace = true }
@@ -46,7 +60,6 @@ chrono = { workspace = true }
 fluent-templates = { workspace = true }
 toml_edit = { workspace = true, features = ["parse"] }
 gilrs = "0.11"
-tokio = { workspace = true, features = ["rt-multi-thread", "macros", "fs"] }
 
 tracing-tracy = { version = "0.11.3", optional = true, features = ["demangle"] }
 rand = { workspace = true, default-features = true }
@@ -56,6 +69,29 @@ unicode-bidi = "0.3.18"
 memmap2.workspace = true
 walkdir.workspace = true
 async-task = "4.7.1"
+
+# WaOS port: what a desktop's own system serves and WaOS serves its own way. A WaOS app is a
+# WASI component: its TLS is WaOS's, it has no sound library of a system's, no runtime of
+# tokio's to drive, and one GPU backend, WaOS's.
+[target.'cfg(not(target_os = "wasi"))'.dependencies]
+cpal = { workspace = true }
+egui-wgpu = { workspace = true, features = ["winit"] }
+ruffle_frontend_utils = { path = "../frontend-utils", features = ["cpal", "fs", "navigator"] }
+tracing-appender = "0.2.5"
+tokio = { workspace = true, features = ["rt-multi-thread", "macros", "fs"] }
+
+[target.'cfg(target_os = "wasi")'.dependencies]
+# Without its default features, which bring wgpu's own backends.
+egui-wgpu = { workspace = true, default-features = false, features = ["winit"] }
+ruffle_frontend_utils = { path = "../frontend-utils", default-features = false, features = ["fs", "navigator"] }
+# Its channels and locks alone: tasks run on WaOS's own executor.
+tokio = { workspace = true, features = ["sync", "macros"] }
+wasdk = "0.8.1"
+wasdk-wgpu = "0.8.1"
+# The player's video on WaOS: H.264 through WaOS's decoders, the rest in software.
+ruffle_video = { path = "../video" }
+ruffle_video_software = { path = "../video/software" }
+slotmap = { workspace = true }
 
 [target.'cfg(unix)'.dependencies]
 fontconfig = { version = "0.11.0", optional = true }

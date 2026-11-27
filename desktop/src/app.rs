@@ -437,7 +437,7 @@ impl MainWindow {
 
 pub struct App {
     main_window: Option<MainWindow>,
-    runtime: Option<tokio::runtime::Runtime>,
+    runtime: Option<crate::task::Runtime>,
     gilrs: Option<Gilrs>,
     event_loop_proxy: RuffleEventSender,
     preferences: GlobalPreferences,
@@ -459,6 +459,11 @@ impl App {
         let mut font_database = fontdb::Database::default();
         font_database.load_system_fonts();
 
+        // WaOS port: WaOS has no gamepads yet, and gilrs takes every wasm32 target for a browser,
+        // whose window it asks for at once.
+        #[cfg(target_os = "wasi")]
+        let gilrs: Option<Gilrs> = None;
+        #[cfg(not(target_os = "wasi"))]
         let gilrs = Gilrs::new()
             .inspect_err(|err| {
                 tracing::warn!("Gamepad support could not be initialized: {err}");
@@ -475,7 +480,7 @@ impl App {
                 proxy.send_event(event).map_err(|_| EventLoopClosed)
             })
         };
-        let runtime = tokio::runtime::Runtime::new()?;
+        let runtime = crate::task::Runtime::new()?;
 
         Ok((
             Self {
@@ -574,6 +579,14 @@ impl ApplicationHandler<RuffleEvent> for App {
                 gui.show_open_dialog();
             }
 
+            // WaOS port: a movie the user opens with Ruffle, the first one among them, arrives
+            // as an open request rather than as the command line's argument.
+            #[cfg(target_os = "wasi")]
+            crate::task::spawn(crate::open_requests::open_each(
+                event_loop_proxy.clone(),
+                preferences.clone(),
+            ));
+
             let mut loaded = LoadingState::Loading;
 
             if movie_url.is_none() {
@@ -626,7 +639,7 @@ impl ApplicationHandler<RuffleEvent> for App {
             (Some(main_window), RuffleEvent::BrowseAndOpen(options, open_type)) => {
                 let event_loop = main_window.event_loop_proxy.clone();
                 let picker = main_window.gui.file_picker();
-                tokio::spawn(async move {
+                crate::task::spawn(async move {
                     let picked = match open_type {
                         OpenType::File => {
                             picker.pick_ruffle_file(None).await.map(|file| (file, None))
@@ -739,9 +752,12 @@ impl ApplicationHandler<RuffleEvent> for App {
             // only place where we're setting control flow, and events cancel wait.
             // Note: the control flow might be set to `ControlFlow::WaitUntil` with a
             // timestamp in the past! Take that into consideration when changing this code.
-            if let Some(next_frame_time) = main_window.next_frame_time {
-                event_loop.set_control_flow(ControlFlow::WaitUntil(next_frame_time));
-            }
+            // With no movie there is no next frame: left at the last movie's time, long
+            // past, the loop would never wait again.
+            event_loop.set_control_flow(match main_window.next_frame_time {
+                Some(next_frame_time) => ControlFlow::WaitUntil(next_frame_time),
+                None => ControlFlow::Wait,
+            });
         }
     }
 

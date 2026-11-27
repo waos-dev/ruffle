@@ -38,9 +38,6 @@ members = [
     "tools/asc",
     "tools/fuzzer",
     "tools/stub-report",
-
-    # WaOS port: Ruffle as a WaOS program, empty on every target but WASI.
-    "waos",
 ]
 default-members = ["desktop"]
 resolver = "2"
@@ -214,3 +211,22 @@ codegen-units = 64
 # built along with the tests and all of their dependencies would get a full
 # second build.
 panic = "unwind"
+
+# WaOS: the libraries the desktop program is written against, each with WaOS's backend.
+[patch.crates-io]
+winit = { git = "https://github.com/waos-dev/winit", branch = "waos" }
+egui = { git = "https://github.com/waos-dev/egui", branch = "waos" }
+emath = { git = "https://github.com/waos-dev/egui", branch = "waos" }
+ecolor = { git = "https://github.com/waos-dev/egui", branch = "waos" }
+epaint = { git = "https://github.com/waos-dev/egui", branch = "waos" }
+epaint_default_fonts = { git = "https://github.com/waos-dev/egui", branch = "waos" }
+egui-winit = { git = "https://github.com/waos-dev/egui", branch = "waos" }
+egui-wgpu = { git = "https://github.com/waos-dev/egui", branch = "waos" }
+egui_extras = { git = "https://github.com/waos-dev/egui", branch = "waos" }
+arboard = { git = "https://github.com/waos-dev/arboard", branch = "waos" }
+rfd = { git = "https://github.com/waos-dev/rfd", branch = "waos" }
+webbrowser = { git = "https://github.com/waos-dev/webbrowser-rs", branch = "waos" }
+dirs = { git = "https://github.com/waos-dev/dirs-rs", branch = "waos" }
+sys-locale = { git = "https://github.com/waos-dev/sys-locale", branch = "waos" }
+fontdb = { git = "https://github.com/waos-dev/fontdb", branch = "waos" }
+reqwest = { git = "https://github.com/waos-dev/reqwest", branch = "waos" }

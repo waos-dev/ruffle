@@ -14,7 +14,9 @@ workspace = true
 default = ["native-tls"]
 cpal = ["dep:cpal", "dep:bytemuck", "ruffle_core/audio"]
 fs = []
-navigator = ["fs", "dep:async-io", "dep:reqwest", "dep:tokio"]
+# WaOS port: reqwest reaches the network on every system (on WaOS through its fork's client);
+# tokio's sockets and async-io's timer are a desktop's, and WaOS's own are wasdk's.
+navigator = ["fs", "dep:async-io", "dep:reqwest", "dep:tokio", "dep:wasdk"]
 ui = []
 freetype = ["ui", "dep:freetype-rs"]
 
@@ -41,7 +43,6 @@ ruffle_common = { path = "../core/common" }
 ruffle_core = { path = "../core", default-features = false }
 ruffle_render = { path = "../render", default-features = false }
 async-channel = { workspace = true }
-async-io = { version = "2.6.0", optional = true }
 futures-lite = "2.6.1"
 # Note: no TLS backend is enabled in this list on purpose; it is provided by
 # this crate's `native-tls` (default) / `rustls-tls` features instead.
@@ -52,9 +53,15 @@ reqwest = { workspace = true, optional = true, features = [
     "http2",
     "system-proxy",
 ] }
-tokio = { workspace = true, features = ["net", "macros"], optional = true }
 cpal = { workspace = true, optional = true }
 bytemuck = { workspace = true, optional = true }
+
+[target.'cfg(not(target_os = "wasi"))'.dependencies]
+async-io = { version = "2.6.0", optional = true }
+tokio = { workspace = true, features = ["net", "macros"], optional = true }
+
+[target.'cfg(target_os = "wasi")'.dependencies]
+wasdk = { version = "0.8.1", optional = true }
 
 [target.'cfg(target_os = "linux")'.dependencies]
 freetype-rs = { version = "0.38.0", optional = true }
