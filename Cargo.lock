@@ -6804,9 +6804,9 @@ dependencies = [
 
 [[package]]
 name = "wasdk"
-version = "0.8.0"
+version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b90221b5cf84279c735bb50677f3ec205de01d7468286ba4b6800fd95ecc9831"
+checksum = "34d8afdabc2bba08e7ad80f76955a84d5befcb38276dfa592157dfc22e3f1b75"
 dependencies = [
  "inventory",
  "raw-window-handle",
@@ -6816,9 +6816,9 @@ dependencies = [
 
 [[package]]
 name = "wasdk-macros"
-version = "0.8.0"
+version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ab97d3b1d17c1701145692dfc61681a51ebd1c2b1a1ff9169b723772cee32fb7"
+checksum = "a9c891044aaedaef246094aff87d9b4483d6630ad49ed30b5eb55f88b0ea1c89"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -6827,11 +6827,10 @@ dependencies = [
 
 [[package]]
 name = "wasdk-wgpu"
-version = "0.8.0"
+version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "927aaad602528c8b2df3f42db228e53711d4109928fe191a62429a4a774fbd8c"
+checksum = "321bd8cb85261bf10f7cde3016cd48105085ce6c5cfdd088e452e93b7736bec7"
 dependencies = [
- "futures",
  "js-sys",
  "wasdk",
  "wgpu",

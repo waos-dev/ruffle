@@ -7,7 +7,7 @@ It runs because the libraries it is written against have WaOS backends, on forks
 What is on top of upstream Ruffle:
 
 - `rust-toolchain.toml`: WaOS's nightly, with `wasm32-wasip3`. Upstream names no toolchain, so on this branch its crates build with this one too.
-- `Cargo.toml`: the forks through `[patch.crates-io]`. `wasdk` is the published 0.8.0.
+- `Cargo.toml`: the forks through `[patch.crates-io]`. `wasdk` is the published 0.8.1.
 - `.github/workflows/waos.yml`: a check that the desktop program builds for WaOS, formatted and without warnings, on each push to `waos`, and that the shared front-end crate does too. Upstream's workflows run on `master` alone.
 
 What the desktop program chooses by target, each at one place:
