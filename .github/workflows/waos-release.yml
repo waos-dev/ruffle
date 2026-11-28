@@ -1,0 +1,79 @@
+# WaOS port: a release of Ruffle for WaOS is one tag, `waos-v<version>`, the version of the
+# `ruffle_desktop` package: the program packaged by `waos package`, signed with the WaOS project's
+# key, and attached with the `index.json` that lists it to the tag's GitHub release, so
+# github.com/waos-dev/ruffle is a WaOS package source (WaOS reads a repository's latest release).
+# Run by hand, it releases a tag that exists again; GitHub offers that only while this file is on
+# the default branch, so a failed release is otherwise re-run from its run's page.
+#
+# Secrets: WAOS_SIGNING_KEY, the WaOS project's signing key, the PEM text `waos package` reads.
+name: WaOS release
+
+on:
+  push:
+    tags: ['waos-v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: The tag to release, waos-v<version>
+        required: true
+        type: string
+
+concurrency:
+  group: waos-release-${{ inputs.tag || github.ref_name }}
+
+env:
+  TAG: ${{ inputs.tag || github.ref_name }}
+  CARGO_TERM_COLOR: always
+
+jobs:
+  release:
+    # On Linux, the cheapest runner that builds it: a component is the same whatever machine built it.
+    # Its Java compiles Ruffle's ActionScript library.
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      # The GitHub release, made and given the package and its index.
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+
+      # rust-toolchain.toml's: WaOS's nightly, with wasm32-wasip3.
+      - name: Rust
+        run: |
+          rustup toolchain install
+          rustc --version
+
+      - name: The tag names the program's version
+        run: |
+          version=$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[] | select(.name == "ruffle_desktop") | .version')
+          test "${TAG#waos-v}" = "$version" || { echo "tag $TAG, ruffle_desktop $version"; exit 1; }
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
+      # The `waos` of the WaOS release the SDK is taken at, read from the lockfile so the two never
+      # differ. wasdk is the published crate here, so `waos` is too.
+      - name: waos
+        run: |
+          version=$(cargo metadata --locked --format-version 1 | jq -r '.packages[] | select(.name == "wasdk") | .version')
+          test -n "$version" || { echo "no wasdk in the lockfile"; exit 1; }
+          cargo install waos-cli --version "$version" --locked
+          waos --version
+
+      # Without the default features that are the desktops' own (OpenH264 downloaded at run time,
+      # fontconfig, FreeType); with Ruffle's software video decoders and LZMA-compressed movies.
+      - name: Ruffle, packaged
+        env:
+          WAOS_SIGNING_KEY: ${{ secrets.WAOS_SIGNING_KEY }}
+        run: |
+          # waos runs cargo without --locked; the lockfile was checked to be current above.
+          waos package -p ruffle_desktop --no-default-features --features software_video,lzma
+          waos package verify "target/waos/dev.waos.ruffle-$VERSION.wapk"
+
+      - name: The package and its index, on the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --verify-tag --latest --title "Ruffle for WaOS $VERSION" --notes "Ruffle for WaOS $VERSION, \`dev.waos.ruffle\`. Add \`github.com/waos-dev/ruffle\` as a source in WaOS to install it."
+          gh release upload "$TAG" "target/waos/dev.waos.ruffle-$VERSION.wapk" target/waos/index.json --clobber
