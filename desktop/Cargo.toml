@@ -14,6 +14,8 @@ workspace = true
 [package.metadata.waos]
 id = "dev.waos.ruffle"
 name = "Ruffle"
+# Ruffle's Linux icon, square and filling its canvas, as WaOS draws icons (packages/waos/icon.svg).
+icon = "packages/waos/icon.png"
 
 # WaOS port: the movies the system offers Ruffle for, the extensions Ruffle's own Windows package
 # declares (`desktop/packages/windows`), each by the MIME type freedesktop.org's shared MIME
