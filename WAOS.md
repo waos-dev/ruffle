@@ -7,7 +7,9 @@ It runs because the libraries it is written against have WaOS backends, on forks
 What is on top of upstream Ruffle:
 
 - `rust-toolchain.toml`: WaOS's nightly, with `wasm32-wasip3`. Upstream names no toolchain, so on this branch its crates build with this one too.
+- `desktop/packages/waos/`: the app's icon, Ruffle's Linux one made square and filling its canvas, as WaOS draws icons; `icon.png` is `icon.svg` drawn at 1024 pixels.
 - `Cargo.toml`: the forks through `[patch.crates-io]`. `wasdk` is the published 0.8.1.
+- `.github/workflows/waos-release.yml`: the release, from a `waos-v<version>` tag (below).
 - `.github/workflows/waos.yml`: a check that the desktop program builds for WaOS, formatted and without warnings, on each push to `waos`, and that the shared front-end crate does too. Upstream's workflows run on `master` alone.
 
 What the desktop program chooses by target, each at one place:
@@ -65,6 +67,13 @@ waos run --release --no-default-features --features software_video,lzma -- /data
 ```
 
 A movie named as an argument is a path among the app's own files, not this computer's: WaOS mounts what the user picks in the dialog or opens with Ruffle, and `/data` is the app's own folder.
+
+## Releasing
+
+1. Set the version, Ruffle's own in the root `Cargo.toml`'s `[workspace.package]`, which `ruffle_desktop` takes, and commit it on `desktop-on-waos`.
+2. Push a tag `waos-v<that version>`, e.g. `git tag waos-v0.8.0 && git push origin waos-v0.8.0`.
+
+`.github/workflows/waos-release.yml` checks the tag against the version, builds and packages the program on Linux with the features above, signed with the WaOS project's key (the repository's secret `WAOS_SIGNING_KEY`), and attaches the `.wapk` and its `index.json` to the tag's GitHub release, marked latest. WaOS reads a repository's latest release, so `github.com/waos-dev/ruffle` added as a source in WaOS installs and updates Ruffle; the official source, `waos-dev/apps`, lists it from there. A failed release is run again from its run's page (Re-run jobs). The workflow can also be run by hand for a tag that exists, but GitHub offers that only for a workflow on the default branch, `master`, which this file is not on. Upstream's workflows start on `master`, on a schedule or by hand, never on a tag, so a `waos-v` tag starts this one alone.
 
 ## Keeping up with upstream Ruffle
 
